@@ -50,14 +50,7 @@ export default function Header({ onToggleSidebar, onGoHome }: Props) {
                     </button>
                 </div>
 
-                <div className="hidden sm:flex items-center gap-4">
-                    <a
-                        href="#search-section"
-                        className="px-5 py-2 rounded-full bg-[#D4AF37] text-red-950 font-bold text-xs sm:text-sm hover:bg-amber-300 transition shadow-sm border border-amber-200/50"
-                    >
-                        பாடல்கள் தேடுக (Search Songs)
-                    </a>
-                </div>
+                 
             </div>
         </header>
     );
