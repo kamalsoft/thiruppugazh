@@ -14,19 +14,39 @@ export default function HeroBanner() {
 
             {/* Top Banner: Prominent Tagline */}
             <div className="bg-gradient-to-r from-[#8B1A1A] via-[#990000] to-[#8B1A1A] rounded-2xl p-4 text-center border-2 border-[#D4AF37] shadow-sm flex items-center justify-center gap-3">
-                <GoldenVelIcon className="w-5 h-5 shrink-0 filter drop-shadow-md" />
+                {/* Vel 1 — glow + sway, starts immediately */}
+                <GoldenVelIcon
+                    className="w-5 h-5 shrink-0 animate-vel-glow animate-vel-sway"
+                    style={{ animationDelay: '0s, 0s' } as React.CSSProperties}
+                />
                 <span className="text-amber-300 text-sm sm:text-base font-bold font-serif tracking-wide drop-shadow-xs">
                     ✨ திருப்புகழைப் பாடப் பாட வாய் மணக்கும் ✨
                 </span>
-                <GoldenVelIcon className="w-5 h-5 shrink-0 filter drop-shadow-md" />
+                {/* Vel 2 — same glow, sway offset so they alternate */}
+                <GoldenVelIcon
+                    className="w-5 h-5 shrink-0 animate-vel-glow animate-vel-sway"
+                    style={{ animationDelay: '1.25s, 0.8s' } as React.CSSProperties}
+                />
             </div>
 
-            {/* Clean Static Image Frame (Replacing Carousel) with Blended Chant */}
+            {/* Hero Image Frame with float + shimmer animation */}
             <div className="relative rounded-2xl overflow-hidden border-2 border-[#D4AF37] shadow-md bg-[#00381c] flex justify-center items-center">
+
+                {/* Floating Murugan Image */}
                 <img
                     src={LORD_MURUGAN_STATIC_IMAGE}
                     alt="அருள்மிகு அறுபடை வீடு முருகப்பெருமான்"
-                    className="w-full h-auto max-h-[500px] sm:max-h-[560px] object-contain bg-[#00381c] p-2 sm:p-4"
+                    className="w-full h-auto max-h-[500px] sm:max-h-[560px] object-contain bg-[#00381c] p-2 sm:p-4 animate-hero-float"
+                />
+
+                {/* Golden shimmer overlay that sweeps across the image */}
+                <div
+                    className="absolute inset-0 pointer-events-none rounded-2xl"
+                    style={{
+                        background: 'linear-gradient(105deg, transparent 40%, rgba(255,215,0,0.08) 50%, transparent 60%)',
+                        backgroundSize: '200% 100%',
+                        animation: 'shine-slide 4s linear infinite',
+                    }}
                 />
 
                 {/* Subtle Bottom Gradient and Blended Chant */}
@@ -57,7 +77,7 @@ export default function HeroBanner() {
 
                     <div className="bg-[#FFFDF7] p-4 rounded-xl border border-amber-300/80 space-y-1">
                         <h4 className="text-sm font-bold text-[#8B1A1A] font-serif flex items-center gap-2">
-                            <span>🥁</span> சந்த நயம் & இசைச்சிறப்பு
+                            <span>🥁</span> சந்த நயம் &amp; இசைச்சிறப்பு
                         </h4>
                         <p className="text-xs text-stone-700 leading-relaxed">
                             1088-க்கும் மேற்பட்ட தனித்துவமான சந்த வேறுபாடுகளும் (Rhythm variations) இசை நூல்களிலும் அடங்காத அபூர்வத் தாள நயங்களும் கொண்டது.
@@ -75,7 +95,7 @@ export default function HeroBanner() {
 
                     <div className="bg-[#FFFDF7] p-4 rounded-xl border border-amber-300/80 space-y-1">
                         <h4 className="text-sm font-bold text-[#8B1A1A] font-serif flex items-center gap-2">
-                            <span>✨</span> தீவினை & நோய் தீர்க்கும் சக்தி
+                            <span>✨</span> தீவினை &amp; நோய் தீர்க்கும் சக்தி
                         </h4>
                         <p className="text-xs text-stone-700 leading-relaxed">
                             உளமாரத் திருப்புகழைப் பாடுவதால் கொடிய நோய்கள், மனக்கவலைகள் மற்றும் இன்னல்கள் அகலும் என்பது பக்தர்களின் நம்பிக்கை.
@@ -94,14 +114,16 @@ export default function HeroBanner() {
                 </div>
             </div>
 
-
-
             {/* 3 Spacious Bottom Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
 
+                {/* Card 1: Vel — glow + sway */}
                 <div className="bg-[#FFFDF7] border-2 border-[#E3C896] hover:border-[#8B1A1A] rounded-2xl p-6 text-center space-y-3 transition shadow-2xs hover:shadow-xs">
                     <div className="flex justify-center">
-                        <GoldenVelIcon className="w-10 h-10 filter drop-shadow-[0_2px_6px_rgba(139,26,26,0.2)]" />
+                        <GoldenVelIcon
+                            className="w-10 h-10 animate-vel-glow animate-vel-sway"
+                            style={{ animationDelay: '0.4s, 0.4s' } as React.CSSProperties}
+                        />
                     </div>
                     <h3 className="text-base font-bold font-serif text-[#7A0000]">
                         சந்தக் கவி
@@ -111,9 +133,13 @@ export default function HeroBanner() {
                     </p>
                 </div>
 
+                {/* Card 2: Peacock feather — levitate */}
                 <div className="bg-[#FFFDF7] border-2 border-[#E3C896] hover:border-[#8B1A1A] rounded-2xl p-6 text-center space-y-3 transition shadow-2xs hover:shadow-xs">
                     <div className="flex justify-center">
-                        <PeacockFeatherIcon className="w-10 h-10" />
+                        <PeacockFeatherIcon
+                            className="w-10 h-10 animate-icon-levitate"
+                            style={{ animationDelay: '0.6s' } as React.CSSProperties}
+                        />
                     </div>
                     <h3 className="text-base font-bold font-serif text-[#7A0000]">
                         தலங்களின் சிறப்பு
@@ -123,9 +149,13 @@ export default function HeroBanner() {
                     </p>
                 </div>
 
+                {/* Card 3: Agal Vilakku — levitate with offset delay */}
                 <div className="bg-[#FFFDF7] border-2 border-[#E3C896] hover:border-[#8B1A1A] rounded-2xl p-6 text-center space-y-3 transition shadow-2xs hover:shadow-xs">
                     <div className="flex justify-center">
-                        <AgalVilakkuIcon className="w-10 h-10" />
+                        <AgalVilakkuIcon
+                            className="w-10 h-10 animate-icon-levitate"
+                            style={{ animationDelay: '1.2s' } as React.CSSProperties}
+                        />
                     </div>
                     <h3 className="text-base font-bold font-serif text-[#7A0000]">
                         ஆன்மீக வழிகாட்டி

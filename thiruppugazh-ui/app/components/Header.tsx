@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Constants } from '@/app/constants/images';
+import GoldenVelIcon from './icons/GoldenVelIcon';
 
 interface Props {
     onToggleSidebar: () => void;
@@ -72,6 +73,14 @@ export default function Header({
                             </p>
                         </div>
                     </button>
+                </div>
+
+                {/* Centre: Animated Vel — divine ornament */}
+                <div className="hidden sm:flex flex-1 justify-center items-center pointer-events-none select-none">
+                    <GoldenVelIcon
+                        className="w-7 h-7 animate-vel-glow animate-vel-sway"
+                        style={{ animationDelay: '0s, 0s' } as React.CSSProperties}
+                    />
                 </div>
 
                 {/* Right: Font Size Controls */}
