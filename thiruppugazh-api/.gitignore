@@ -4,3 +4,8 @@ __pycache__
 venv/
 app/__pycache__/
 .pyc
+*.whl
+dist/
+build/
+*.egg-info/
+.DS_Store
