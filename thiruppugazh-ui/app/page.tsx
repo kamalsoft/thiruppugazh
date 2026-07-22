@@ -10,9 +10,36 @@ import SongsSearch from './components/SongsSearch';
 import PlacesDirectory from './components/PlacesDirectory';
 import SongModal from './components/SongModal';
 
+const FONT_SIZES = [14, 16, 18, 20, 22];
+const DEFAULT_FONT_SIZE = 16;
+
 export default function LandingPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
+
+  // Font size state — scales the entire page via html root font-size (rem)
+  const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
+
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${fontSize}px`;
+    return () => {
+      // Reset to browser default when component unmounts
+      document.documentElement.style.fontSize = '';
+    };
+  }, [fontSize]);
+
+  const handleIncreaseFontSize = () => {
+    setFontSize((prev) => {
+      const idx = FONT_SIZES.indexOf(prev);
+      return idx < FONT_SIZES.length - 1 ? FONT_SIZES[idx + 1] : prev;
+    });
+  };
+  const handleDecreaseFontSize = () => {
+    setFontSize((prev) => {
+      const idx = FONT_SIZES.indexOf(prev);
+      return idx > 0 ? FONT_SIZES[idx - 1] : prev;
+    });
+  };
 
   // Shared Data States
   const [songs, setSongs] = useState<SongSummary[]>([]);
@@ -65,6 +92,11 @@ export default function LandingPage() {
       <Header
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         onGoHome={handleGoHome}
+        fontSize={fontSize}
+        onIncreaseFontSize={handleIncreaseFontSize}
+        onDecreaseFontSize={handleDecreaseFontSize}
+        minFontSize={FONT_SIZES[0]}
+        maxFontSize={FONT_SIZES[FONT_SIZES.length - 1]}
       />
 
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
