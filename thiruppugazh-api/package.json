@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "vercel": "^56.5.0"
+    "vercel": "^54.17.3"
+  },
+  "engines": {
+    "node": ">=20 <25"
   }
 }
