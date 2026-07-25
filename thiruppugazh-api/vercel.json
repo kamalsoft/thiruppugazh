@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "thiruppugazh-api/app/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "thiruppugazh-api/app/main.py"
+    }
+  ]
+}
