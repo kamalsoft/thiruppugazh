@@ -20,4 +20,4 @@ dependencies = [
 packages = ["app"]
 
 [tool.vercel]
-entrypoint = "api.index:app"
+entrypoint = "api.main:app"
