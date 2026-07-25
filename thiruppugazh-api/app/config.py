@@ -1,6 +1,8 @@
-import os
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SONGS_DIR = os.path.join(BASE_DIR, "songs")
-INDEX_FILE = os.path.join(SONGS_DIR, "index.json")
-PLACES_FILE = os.path.join(SONGS_DIR, "place_mappings.json")
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+SONGS_DIR = BASE_DIR / "songs"
+
+INDEX_FILE = DATA_DIR / "songs_index.json"
+PLACES_FILE = DATA_DIR / "places.json"
