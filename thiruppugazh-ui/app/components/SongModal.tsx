@@ -15,7 +15,7 @@ export default function SongModal({ songNumber, onClose }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (songNumber === null) {
+    if (songNumber === null || !Number.isFinite(songNumber)) {
       setSong(null);
       setError(null);
       setLoading(false);

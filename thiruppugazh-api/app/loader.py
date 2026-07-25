@@ -35,8 +35,20 @@ class SongDatabase:
             or ""
         )
 
+        # normalize list -> string
+        if isinstance(chandam, list):
+            chandam = "\n".join(str(x) for x in chandam)
+        elif chandam is None:
+            chandam = ""
+        else:
+            chandam = str(chandam)
+
         if isinstance(lyrics, list):
             lyrics = "\n".join(str(x) for x in lyrics)
+        elif lyrics is None:
+            lyrics = ""
+        else:
+            lyrics = str(lyrics)
 
         song["chandam"] = chandam
         song["lyrics"] = lyrics
