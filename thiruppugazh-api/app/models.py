@@ -1,12 +1,12 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 
 class SongSummary(BaseModel):
     song_number: int
-    title: str
-    category_or_place: str
-    raga: str
-    thala: str
+    title: Optional[str] = ""
+    category_or_place: Optional[str] = ""
+    raga: Optional[str] = ""
+    thala: Optional[str] = ""
     chandam_structure: Optional[str] = ""
 
 class SongDetail(BaseModel):
@@ -16,14 +16,10 @@ class SongDetail(BaseModel):
     raga: Optional[str] = None
     thala: Optional[str] = None
     chandam_structure: Optional[str] = None
-    file_path: Optional[str] = None
-
-    # add these fields
     chandam: Optional[str] = None
     lyrics: Optional[str] = None
     full_text: Optional[str] = None
 
-    # keep extra keys if any song file has additional fields
     model_config = ConfigDict(extra="allow")
 
 class PlaceMapping(BaseModel):

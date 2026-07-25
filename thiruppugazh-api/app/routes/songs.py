@@ -11,11 +11,11 @@ router = APIRouter(prefix="/api", tags=["Songs"])
 # -------------------------------------------------------------------
 @router.get("/songs", response_model=PaginatedSongResponse)
 def get_songs(
-    q: Optional[str] = Query(None, description="Search term for lyrics, title, or place"),
-    place: Optional[str] = Query(None, description="Filter by place or category"),
-    raga: Optional[str] = Query(None, description="Filter by raga"),
-    thala: Optional[str] = Query(None, description="Filter by thala"),
-    chandam: Optional[str] = Query(None, description="Filter by chandam pattern"),
+    q: Optional[str] = Query(None, max_length=200, description="Search term for lyrics, title, or place"),
+    place: Optional[str] = Query(None, max_length=100, description="Filter by place or category"),
+    raga: Optional[str] = Query(None, max_length=100, description="Filter by raga"),
+    thala: Optional[str] = Query(None, max_length=100, description="Filter by thala"),
+    chandam: Optional[str] = Query(None, max_length=200, description="Filter by chandam pattern"),
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(20, ge=1, le=100, description="Items per page")
 ):
@@ -26,8 +26,7 @@ def get_songs(
     
     total = len(all_matched)
     start = (page - 1) * limit
-    end = start + limit
-    paginated_results = all_matched[start:end]
+    paginated_results = all_matched[start:start + limit]
 
     return {
         "total": total,
@@ -39,14 +38,13 @@ def get_songs(
 # -------------------------------------------------------------------
 # 2. Song Navigation & Random Utilities
 # -------------------------------------------------------------------
-@router.get("/songs/random", response_model=SongDetail)
+@router.get("/random-song", response_model=SongDetail)
 def get_random_song():
     """
-    Retrieve a completely random Thiruppugazh song for daily reading or discovery.
+    Retrieve a random Thiruppugazh song for daily reading or discovery.
     """
     if not db.songs_index:
         raise HTTPException(status_code=404, detail="No songs available in database.")
-    
     random_entry = random.choice(db.songs_index)
     song_detail = db.get_song_by_number(random_entry["song_number"])
     if not song_detail:
@@ -74,7 +72,7 @@ def get_places():
     """
     Get all unique places/temples with total song counts and song number lists.
     """
-    return db.places_index
+    return list(db.places_index)  # return copy
 
 @router.get("/ragas", response_model=List[str])
 def get_ragas():

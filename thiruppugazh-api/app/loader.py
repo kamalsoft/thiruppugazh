@@ -1,25 +1,61 @@
 import os
 import json
+import logging
 from typing import List, Dict, Optional
 from app.config import INDEX_FILE, PLACES_FILE, SONGS_DIR
+
+logger = logging.getLogger(__name__)
 
 class SongDatabase:
     def __init__(self):
         self.songs_index: List[Dict] = []
         self.places_index: List[Dict] = []
         self._songs_cache: Dict[int, Dict] = {}
+        self._ragas_cache: Optional[List[str]] = None
+        self._thalas_cache: Optional[List[str]] = None
         self.load_indexes()
 
     def load_indexes(self):
-        if os.path.exists(INDEX_FILE):
-            with open(INDEX_FILE, 'r', encoding='utf-8') as f:
-                self.songs_index = json.load(f)
+        try:
+            if os.path.exists(INDEX_FILE):
+                with open(INDEX_FILE, 'r', encoding='utf-8') as f:
+                    self.songs_index = json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            logger.error(f"Failed to load songs index: {e}")
+            self.songs_index = []
 
-        if os.path.exists(PLACES_FILE):
-            with open(PLACES_FILE, 'r', encoding='utf-8') as f:
-                self.places_index = json.load(f)
+        try:
+            if os.path.exists(PLACES_FILE):
+                with open(PLACES_FILE, 'r', encoding='utf-8') as f:
+                    self.places_index = json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            logger.error(f"Failed to load places index: {e}")
+            self.places_index = []
+
+        # Preload all songs into cache for fast full-text search
+        self._build_search_index()
+
+    def _build_search_index(self):
+        """Preload all songs into memory cache at startup."""
+        for item in self.songs_index:
+            try:
+                num = int(item.get("song_number", -1))
+                if num > 0 and num not in self._songs_cache:
+                    self.get_song_by_number(num)
+            except Exception as e:
+                logger.warning(f"Could not preload song {item.get('song_number')}: {e}")
+
+    def _safe_path(self, rel_path: str) -> str:
+        """Prevent path traversal attacks."""
+        base = os.path.realpath(os.getcwd())
+        resolved = os.path.realpath(os.path.join(base, rel_path))
+        if not resolved.startswith(base):
+            raise ValueError(f"Path traversal detected: {rel_path}")
+        return resolved
 
     def _normalize_song(self, song: Dict) -> Dict:
+        song = dict(song)  # avoid mutating original
+
         chandam = (
             song.get("chandam")
             or song.get("chandam_structure")
@@ -35,24 +71,20 @@ class SongDatabase:
             or ""
         )
 
-        # normalize list -> string
         if isinstance(chandam, list):
             chandam = "\n".join(str(x) for x in chandam)
-        elif chandam is None:
-            chandam = ""
         else:
-            chandam = str(chandam)
+            chandam = str(chandam) if chandam else ""
 
         if isinstance(lyrics, list):
             lyrics = "\n".join(str(x) for x in lyrics)
-        elif lyrics is None:
-            lyrics = ""
         else:
-            lyrics = str(lyrics)
+            lyrics = str(lyrics) if lyrics else ""
 
         song["chandam"] = chandam
         song["lyrics"] = lyrics
         song["full_text"] = lyrics
+        song.pop("file_path", None)  # strip filesystem path before returning
         if "chandam_structure" not in song:
             song["chandam_structure"] = chandam
         return song
@@ -62,30 +94,44 @@ class SongDatabase:
             return self._songs_cache[song_number]
 
         index_item = next(
-            (s for s in self.songs_index if int(s.get("song_number", -1)) == int(song_number)),
+            (s for s in self.songs_index if int(s.get("song_number", -1)) == song_number),
             None
         )
         if not index_item:
             return None
 
-        # Build file path from index if available, else fallback
-        rel_path = index_item.get("file_path", f"songs/song_{song_number}.json")
-        file_path = rel_path if os.path.isabs(rel_path) else os.path.join(os.getcwd(), rel_path)
-        if not os.path.exists(file_path):
-            file_path = os.path.join(SONGS_DIR, f"song_{song_number}.json")
-
-        # Start with index metadata
         song: Dict = dict(index_item)
 
-        # Merge full song file content when present
-        if os.path.exists(file_path):
-            with open(file_path, "r", encoding="utf-8") as f:
-                file_data = json.load(f)
-            song.update(file_data)
+        try:
+            rel_path = index_item.get("file_path", f"songs/song_{song_number}.json")
+            file_path = self._safe_path(rel_path)
+            if not os.path.exists(file_path):
+                file_path = os.path.join(str(SONGS_DIR), f"song_{song_number}.json")
+
+            if os.path.exists(file_path):
+                with open(file_path, "r", encoding="utf-8") as f:
+                    file_data = json.load(f)
+                song.update(file_data)
+        except (ValueError, IOError, json.JSONDecodeError) as e:
+            logger.warning(f"Could not load song file for {song_number}: {e}")
 
         song = self._normalize_song(song)
         self._songs_cache[song_number] = song
         return song
+
+    def get_ragas(self) -> List[str]:
+        if self._ragas_cache is None:
+            self._ragas_cache = sorted({
+                song.get("raga", "") for song in self.songs_index if song.get("raga")
+            })
+        return self._ragas_cache
+
+    def get_thalas(self) -> List[str]:
+        if self._thalas_cache is None:
+            self._thalas_cache = sorted({
+                song.get("thala", "") for song in self.songs_index if song.get("thala")
+            })
+        return self._thalas_cache
 
     def search_songs(
         self,
@@ -107,24 +153,21 @@ class SongDatabase:
 
             if chandam:
                 item_chandam = (
-                    item.get("chandam", "")
-                    or item.get("chandam_structure", "")
+                    item.get("chandam", "") or item.get("chandam_structure", "")
                 ).lower()
                 if chandam.lower() not in item_chandam:
                     continue
 
             if query:
-                song_detail = self.get_song_by_number(int(item["song_number"]))
+                song_detail = self._songs_cache.get(int(item["song_number"]))
                 if not song_detail:
                     continue
-
                 search_target = " ".join([
                     str(song_detail.get("title", "")),
                     str(song_detail.get("category_or_place", "")),
                     str(song_detail.get("lyrics", "")),
                     str(song_detail.get("chandam", "")),
                 ]).lower()
-
                 if query.lower() not in search_target:
                     continue
 
