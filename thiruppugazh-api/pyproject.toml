@@ -32,3 +32,6 @@ prod = [
 
 [tool.setuptools]
 packages = ["app"]
+
+[tool.vercel]
+entrypoint = "thiruppugazh-api.api.index:app"
