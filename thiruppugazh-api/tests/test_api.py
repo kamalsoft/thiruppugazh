@@ -142,8 +142,3 @@ def test_invalid_sort_is_rejected():
 @pytest.mark.parametrize("url", ["/api/places", "/api/ragas", "/api/thalas"])
 def test_static_lists_are_cacheable(url):
     assert "max-age" in client.get(url).headers["cache-control"]
-
-
-def test_song_detail_has_no_translation_until_added():
-    body = client.get("/api/songs/1").json()
-    assert body.get("english") is None and body.get("meaning") is None

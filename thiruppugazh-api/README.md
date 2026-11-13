@@ -44,16 +44,6 @@ All routes are under `/api`:
 
 The loader reads these at import time (`app/loader.py`). Paths are set in `app/config.py`.
 
-## Translations (optional)
-
-Add `songs/translations/song_<n>.json` to give a song English text and per-line meanings:
-
-```json
-{ "english": ["line 1 in English", "line 2 ..."], "meaning": ["meaning of line 1", "..."] }
-```
-
-Each list has one entry per lyric line, in order. Songs without a file return no `english` or `meaning` field, and the UI shows a "not added yet" message.
-
 ## Deployment (Vercel)
 
 - The API deploys from the repo root with `vercel.json`, which runs `thiruppugazh-api/app/main.py`.

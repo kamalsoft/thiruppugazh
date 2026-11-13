@@ -3,7 +3,7 @@ import json
 import unicodedata
 import logging
 from typing import List, Dict, Optional
-from app.config import INDEX_FILE, PLACES_FILE, SONGS_DIR, TRANSLATIONS_DIR
+from app.config import INDEX_FILE, PLACES_FILE, SONGS_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -106,18 +106,6 @@ class SongDatabase:
             song["chandam_structure"] = chandam
         return song
 
-    def _load_translation(self, song_number: int) -> Dict:
-        path = TRANSLATIONS_DIR / f"song_{song_number}.json"
-        if not path.exists():
-            return {}
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (json.JSONDecodeError, IOError) as e:
-            logger.warning(f"Could not load translation for {song_number}: {e}")
-            return {}
-        return {key: data[key] for key in ("english", "meaning") if isinstance(data.get(key), list)}
-
     def get_song_by_number(self, song_number: int):
         if song_number in self._songs_cache:
             return self._songs_cache[song_number]
@@ -145,7 +133,6 @@ class SongDatabase:
             logger.warning(f"Could not load song file for {song_number}: {e}")
 
         song = self._normalize_song(song)
-        song.update(self._load_translation(song_number))
         self._songs_cache[song_number] = song
         return song
 

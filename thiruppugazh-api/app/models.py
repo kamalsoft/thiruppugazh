@@ -20,8 +20,6 @@ class SongDetail(BaseModel):
     chandam: Optional[str] = None
     lyrics: Optional[str] = None
     full_text: Optional[str] = None
-    english: Optional[List[str]] = None
-    meaning: Optional[List[str]] = None
 
     model_config = ConfigDict(extra="allow")
 

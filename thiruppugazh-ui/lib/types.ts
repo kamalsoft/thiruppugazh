@@ -12,8 +12,6 @@ export interface SongDetail extends SongSummary {
   chandam: string[];
   lyrics: string[];
   full_text: string;
-  english?: string[];
-  meaning?: string[];
 }
 
 export interface PaginatedResponse {
