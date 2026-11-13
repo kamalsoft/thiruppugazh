@@ -116,10 +116,7 @@ class SongDatabase:
         except (json.JSONDecodeError, IOError) as e:
             logger.warning(f"Could not load translation for {song_number}: {e}")
             return {}
-        result = {key: data[key] for key in ("english", "meaning") if isinstance(data.get(key), list)}
-        if isinstance(data.get("status"), str):
-            result["translation_note"] = data["status"]
-        return result
+        return {key: data[key] for key in ("english", "meaning") if isinstance(data.get(key), list)}
 
     def get_song_by_number(self, song_number: int):
         if song_number in self._songs_cache:

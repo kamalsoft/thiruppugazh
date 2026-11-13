@@ -14,7 +14,6 @@ export interface SongDetail extends SongSummary {
   full_text: string;
   english?: string[];
   meaning?: string[];
-  translation_note?: string;
 }
 
 export interface PaginatedResponse {

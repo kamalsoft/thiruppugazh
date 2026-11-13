@@ -450,12 +450,6 @@ export default function SongModal({
                   })}
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {lyricLang !== 'ta' && song.translation_note && (
-                    <p className="text-sm text-amber-900 bg-amber-50 border border-amber-300 rounded-xl p-3">
-                      {song.translation_note}
-                    </p>
-                  )}
                 <div
                   className="space-y-1 text-center text-[#3B0000] font-serif leading-loose"
                   style={{ fontSize: lyricsSize }}
@@ -469,7 +463,6 @@ export default function SongModal({
                   ) : (
                     <p className="text-stone-500 text-base">{MISSING_TEXT[lyricLang]}</p>
                   )}
-                </div>
                 </div>
               )}
             </div>
