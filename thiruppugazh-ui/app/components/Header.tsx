@@ -60,8 +60,8 @@ export default function Header({
                         className="flex items-center gap-3 text-left focus:outline-none group cursor-pointer"
                     >
                         <img
-                            src={Constants.THIRUCHENDUR_GOPURAM_URL}
-                            alt="Lord Murugan"
+                            src="/logo.svg"
+                            alt="திருப்புகழ் சின்னம்"
                             className="w-10 h-10 sm:w-11 sm:h-11 object-cover rounded-xl border-2 border-[#D4AF37] shadow-sm group-hover:scale-105 transition-transform"
                         />
                         <div>
