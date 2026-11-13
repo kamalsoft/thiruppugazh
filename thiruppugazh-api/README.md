@@ -59,6 +59,3 @@ pip install pytest httpx
 pytest
 ```
 
-## Legacy
-
-`app.py` is an older Flask version kept for reference. The deployed app is `app/main.py`. Whether to delete `app.py` is an open decision.
