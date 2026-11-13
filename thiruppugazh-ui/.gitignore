@@ -60,3 +60,4 @@ coverage/
 node_modules
 /node_modules
 /qa/node_modules/
+.env*.local
