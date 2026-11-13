@@ -74,6 +74,8 @@ export default function LandingPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const [indexedTotal, setIndexedTotal] = useState<number | null>(null);
   const [savedSongs, setSavedSongs] = useState<number[]>([]);
+  const [sort, setSort] = useState('number');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     setPlacesLoading(true);
@@ -117,6 +119,8 @@ export default function LandingPage() {
       fetchSongs({
         q: isNumber ? '' : filters.q.normalize('NFC'),
         number: isNumber ? filters.q.trim() : '',
+        sort,
+        order,
         place: filters.place,
         raga: filters.raga,
         thala: filters.thala,
@@ -137,7 +141,7 @@ export default function LandingPage() {
     }, filters.q ? 300 : 0);
 
     return () => clearTimeout(timer);
-  }, [filters, page, reloadKey]);
+  }, [filters, page, reloadKey, sort, order]);
 
   const handleGoHome = () => {
     setActiveTab('overview');
@@ -157,6 +161,12 @@ export default function LandingPage() {
     }, 100);
   };
 
+  const changeSort = (nextSort: string, nextOrder: 'asc' | 'desc') => {
+    setSort(nextSort);
+    setOrder(nextOrder);
+    setPage(1);
+  };
+
   const openSongsForPlace = (place: string) => {
     setFilters({ ...initialFilters, place });
     setPage(1);
@@ -169,7 +179,7 @@ export default function LandingPage() {
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold"
       >
-        உள்ளடக்கத்திற்குச் செல் (Skip to content)
+        உள்ளடக்கத்திற்குச் செல்க (Skip to content)
       </a>
 
       <Header
@@ -249,7 +259,7 @@ export default function LandingPage() {
                   <strong>திருவண்ணாமலையில்</strong> பிறந்தார்.
                 </p>
                 <p>
-                  மரபுவழிச் செய்தியின்படி, இளமையில் ஒழுக்கமற்ற வாழ்வில் ஈடுபட்ட அருணகிரியார்,
+                  மரபுவழிச் செய்தியின்படி, இளமையில் வழி தவறிய வாழ்வில் ஈடுபட்ட அருணகிரியார்,
                   தமக்கையின் அறிவுரையாலும் முருகப் பெருமானின் அருளாலும் மனம் மாறி பக்தி வழிக்குத்
                   திரும்பினார். அதன் பின்னர் தம் வாழ்வை முருகனைப் பாடுவதற்கு அர்ப்பணித்தார்.
                 </p>
@@ -307,6 +317,9 @@ export default function LandingPage() {
                   onPageChange={setPage}
                   onSelectSong={setSelectedSongNumber}
                   saved={savedSongs}
+                  sort={sort}
+                  order={order}
+                  onSortChange={changeSort}
                 />
               </div>
 

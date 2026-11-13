@@ -2,7 +2,7 @@ import random
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List
 from app.models import SongSummary, SongDetail, PlaceMapping, PaginatedSongResponse
-from app.loader import db
+from app.loader import db, sort_songs
 
 router = APIRouter(prefix="/api", tags=["Songs"])
 
@@ -18,12 +18,15 @@ def get_songs(
     chandam: Optional[str] = Query(None, max_length=200, description="Filter by chandam pattern"),
     number: Optional[int] = Query(None, ge=1, description="Exact song number"),
     page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(20, ge=1, le=100, description="Items per page")
+    limit: int = Query(20, ge=1, le=100, description="Items per page"),
+    sort: str = Query("number", pattern="^(number|place|raga|thala)$", description="Sort field"),
+    order: str = Query("asc", pattern="^(asc|desc)$", description="Sort direction"),
 ):
     """
     Search and filter songs across multiple fields with pagination support.
     """
     all_matched = db.search_songs(query=q, place=place, raga=raga, thala=thala, chandam=chandam, number=number)
+    all_matched = sort_songs(all_matched, sort, order == "desc")
     
     total = len(all_matched)
     start = (page - 1) * limit

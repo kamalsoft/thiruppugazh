@@ -105,3 +105,35 @@ def test_search_matches_decomposed_tamil_text():
     import unicodedata
     decomposed = unicodedata.normalize("NFD", "கைத்தல")
     assert client.get("/api/songs", params={"q": decomposed, "limit": 1}).json()["total"] == 12
+
+
+def _songs(**params):
+    """All matching songs, across pages (the API caps each page at 100)."""
+    rows, page = [], 1
+    while True:
+        body = client.get("/api/songs", params={"limit": 100, "page": page, **params}).json()
+        rows += body["results"]
+        if len(rows) >= body["total"]:
+            return rows
+        page += 1
+
+
+def test_sort_by_place_orders_names_and_keeps_empty_last():
+    names = [s["category_or_place"] for s in _songs(sort="place", order="asc")]
+    filled = [n for n in names if n]
+    assert filled == sorted(filled, key=str.lower)
+
+
+def test_sort_descending_reverses_order():
+    asc = [s["raga"] for s in _songs(sort="raga", order="asc") if s["raga"]]
+    desc = [s["raga"] for s in _songs(sort="raga", order="desc") if s["raga"]]
+    assert desc == list(reversed(asc))
+
+
+def test_default_sort_is_song_number():
+    numbers = [s["song_number"] for s in _songs()]
+    assert numbers == sorted(numbers)
+
+
+def test_invalid_sort_is_rejected():
+    assert client.get("/api/songs", params={"sort": "title"}).status_code == 422

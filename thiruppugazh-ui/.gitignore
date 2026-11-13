@@ -56,3 +56,7 @@ coverage/
 *.pem
 .vercel
 .DS_Store
+
+node_modules
+/node_modules
+/qa/node_modules/

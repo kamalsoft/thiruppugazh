@@ -70,7 +70,7 @@ export default function PlacesDirectory({ places, loading, onSelectPlace }: Prop
                             </div>
 
                             <span className="text-xs font-bold text-[#8B1A1A] bg-[#FCE8C3] px-2.5 py-1 rounded-lg border border-amber-300/80 group-hover:bg-[#8B1A1A] group-hover:text-amber-100 transition">
-                                தேர்க →
+                                காண்க →
                             </span>
                         </div>
                     ))}

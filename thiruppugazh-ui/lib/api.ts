@@ -13,6 +13,8 @@ type SongSearchParams = {
   chandam?: string;
   number?: string | number;
   page?: number;
+  sort?: string;
+  order?: string;
   limit?: number;
 };
 
@@ -55,6 +57,8 @@ export async function fetchSongs(params: SongSearchParams = {}): Promise<Paginat
   appendIfValue(query, 'thala', params.thala);
   appendIfValue(query, 'chandam', params.chandam);
   appendIfValue(query, 'number', params.number);
+  appendIfValue(query, 'sort', params.sort);
+  appendIfValue(query, 'order', params.order);
 
   query.append('page', String(params.page || 1));
   query.append('limit', String(params.limit || API_CONFIG.DEFAULT_LIMIT));

@@ -155,14 +155,14 @@ export default function SongModal({ songNumber, onClose, isSaved, onToggleSaved 
             onClick={onToggleSaved}
             className="px-5 py-2 border-2 border-[#8B1A1A] text-[#8B1A1A] text-sm font-bold rounded-xl hover:bg-red-50 transition"
           >
-            {isSaved ? '✓ சேமித்தது (நீக்க)' : '☆ சேமி'}
+            {isSaved ? '✓ சேமிக்கப்பட்டது (நீக்குக)' : '☆ சேமிக்க'}
           </button>
           <button
             type="button"
             onClick={onClose}
             className="px-5 py-2 bg-[#8B1A1A] text-amber-100 text-sm font-bold rounded-xl hover:bg-[#701212] transition"
           >
-            மூடு (Close)
+            மூடுக (Close)
           </button>
         </div>
       </div>

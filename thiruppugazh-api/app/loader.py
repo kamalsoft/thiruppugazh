@@ -7,6 +7,18 @@ from app.config import INDEX_FILE, PLACES_FILE, SONGS_DIR
 
 logger = logging.getLogger(__name__)
 
+SORT_FIELDS = {"place": "category_or_place", "raga": "raga", "thala": "thala"}
+
+def sort_songs(items: List[Dict], sort: str, descending: bool) -> List[Dict]:
+    """Sort by song number, or by a text field with empty values last."""
+    if sort == "number":
+        return sorted(items, key=lambda s: int(s["song_number"]), reverse=descending)
+    field = SORT_FIELDS[sort]
+    filled = [s for s in items if clean_value(s.get(field))]
+    empty = [s for s in items if not clean_value(s.get(field))]
+    filled.sort(key=lambda s: (clean_value(s.get(field)).lower(), int(s["song_number"])), reverse=descending)
+    return filled + empty
+
 def clean_value(value) -> str:
     """Collapse runs of whitespace so 'ஆதி   (x)' and 'ஆதி (x)' are the same value."""
     return " ".join((value or "").split())
