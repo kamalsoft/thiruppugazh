@@ -374,6 +374,21 @@ export default function LandingPage() {
                   </div>
 
                   <div>
+                    <p className="text-sm text-stone-700">
+                      மூலநூல்கள் Project Madurai தளத்தில் உள்ளன:{' '}
+                      <a href="https://www.projectmadurai.org/pmworks.html" target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
+                        பட்டியல்
+                      </a>
+                      ,{' '}
+                      <a href="https://www.projectmadurai.org/pm_etexts/utf8/pmuni0180.html" target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
+                        திருப்புகழ் பாகம் 1
+                      </a>
+                      ,{' '}
+                      <a href="https://www.projectmadurai.org/pm_etexts/utf8/pmuni0023.html" target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
+                        கந்தர் அனுபூதி மற்றும் விருத்தங்கள்
+                      </a>
+                      .
+                    </p>
                     <h3 className="text-base font-bold text-[#8B1A1A] mb-3">இவரது நூல்கள்</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 not-prose">
                       {ARUNAGIRI_WORKS.map((work) => (
