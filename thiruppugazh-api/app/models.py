@@ -8,6 +8,7 @@ class SongSummary(BaseModel):
     raga: Optional[str] = ""
     thala: Optional[str] = ""
     chandam_structure: Optional[str] = ""
+    first_line: Optional[str] = ""
 
 class SongDetail(BaseModel):
     song_number: int

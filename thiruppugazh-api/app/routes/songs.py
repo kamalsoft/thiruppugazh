@@ -12,21 +12,25 @@ router = APIRouter(prefix="/api", tags=["Songs"])
 @router.get("/songs", response_model=PaginatedSongResponse)
 def get_songs(
     q: Optional[str] = Query(None, max_length=200, description="Search term for lyrics, title, or place"),
-    place: Optional[str] = Query(None, max_length=100, description="Filter by place or category"),
+    place: Optional[str] = Query(None, max_length=100, description="Exact place or category name, case-insensitive"),
     raga: Optional[str] = Query(None, max_length=100, description="Filter by raga"),
     thala: Optional[str] = Query(None, max_length=100, description="Filter by thala"),
     chandam: Optional[str] = Query(None, max_length=200, description="Filter by chandam pattern"),
+    number: Optional[int] = Query(None, ge=1, description="Exact song number"),
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(20, ge=1, le=100, description="Items per page")
 ):
     """
     Search and filter songs across multiple fields with pagination support.
     """
-    all_matched = db.search_songs(query=q, place=place, raga=raga, thala=thala, chandam=chandam)
+    all_matched = db.search_songs(query=q, place=place, raga=raga, thala=thala, chandam=chandam, number=number)
     
     total = len(all_matched)
     start = (page - 1) * limit
-    paginated_results = all_matched[start:start + limit]
+    paginated_results = [
+        dict(s, first_line=db.first_line(int(s["song_number"])))
+        for s in all_matched[start:start + limit]
+    ]
 
     return {
         "total": total,
@@ -72,20 +76,19 @@ def get_places():
     """
     Get all unique places/temples with total song counts and song number lists.
     """
-    return list(db.places_index)  # return copy
+    # shortcut: hides places whose names contain stray '§' (DATA-2); upgrade by fixing songs/place_mappings.json
+    return [p for p in db.places_index if "§" not in p["place"]]
 
 @router.get("/ragas", response_model=List[str])
 def get_ragas():
     """
     Get a list of all distinct ragas present across the dataset.
     """
-    ragas = sorted(list({song.get("raga", "") for song in db.songs_index if song.get("raga")}))
-    return ragas
+    return db.get_ragas()
 
 @router.get("/thalas", response_model=List[str])
 def get_thalas():
     """
     Get a list of all distinct thalas present across the dataset.
     """
-    thalas = sorted(list({song.get("thala", "") for song in db.songs_index if song.get("thala")}))
-    return thalas
+    return db.get_thalas()

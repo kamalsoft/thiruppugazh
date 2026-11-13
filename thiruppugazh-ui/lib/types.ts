@@ -5,6 +5,7 @@ export interface SongSummary {
   raga: string;
   thala: string;
   chandam_structure?: string;
+  first_line?: string;
 }
 
 export interface SongDetail extends SongSummary {

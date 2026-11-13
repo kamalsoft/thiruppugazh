@@ -57,7 +57,7 @@ export default function PlacesMap({ places, loading }: Props) {
                     தலங்கள் வரைபடம் — Places Map
                 </h2>
                 <p className="text-sm text-stone-600 font-medium mt-1.5">
-                    Locate the sacred shrines glorified by Saint Arunagirinathar. Click "Pin on Map" to open Google Maps.
+                    Locate the sacred shrines glorified by Saint Arunagirinathar. Click &quot;Pin on Map&quot; to open Google Maps.
                 </p>
             </div>
 

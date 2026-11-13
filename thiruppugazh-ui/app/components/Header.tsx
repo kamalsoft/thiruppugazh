@@ -61,7 +61,7 @@ export default function Header({
                     >
                         <img
                             src={Constants.THIRUCHENDUR_GOPURAM_URL}
-                            alt="Thiruchendur Temple Rajagopuram"
+                            alt="Lord Murugan"
                             className="w-10 h-10 sm:w-11 sm:h-11 object-cover rounded-xl border-2 border-[#D4AF37] shadow-sm group-hover:scale-105 transition-transform"
                         />
                         <div>
