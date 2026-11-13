@@ -1,4 +1,9 @@
 import os
+import sys
+
+# shortcut: the root vercel.json deploys this file from the repo root, where the `app` package is not on sys.path; upgrade by setting the Vercel project root to thiruppugazh-api and removing the root vercel.json
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
