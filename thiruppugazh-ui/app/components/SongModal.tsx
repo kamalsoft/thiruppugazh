@@ -178,20 +178,23 @@ export default function SongModal({
     ? rawLines.filter((line) => startsWithTamil(line.trim())).map(simplify)
     : rawLines;
 
-  // Sing-along: advance one line per beat while playing, and stop at the last line.
+  // Sing-along: the current line follows elapsed time, so a delayed timer catches up instead of falling behind.
   useEffect(() => {
-    if (!playing || !singMode) return;
+    if (!playing || !singMode || lines.length === 0) return;
+    const beatMs = 60000 / SPEEDS[speedIndex].linesPerMinute;
+    const startedAt = performance.now();
+    const startLine = activeLine;
     const timer = setInterval(() => {
-      setActiveLine((current) => {
-        if (current >= lines.length - 1) {
-          setPlaying(false);
-          return current;
-        }
-        return current + 1;
-      });
-    }, 60000 / SPEEDS[speedIndex].linesPerMinute);
+      const target = startLine + Math.floor((performance.now() - startedAt) / beatMs);
+      if (target >= lines.length - 1) {
+        setActiveLine(lines.length - 1);
+        setPlaying(false);
+      } else {
+        setActiveLine(target);
+      }
+    }, 250);
     return () => clearInterval(timer);
-  }, [playing, singMode, speedIndex, lines.length]);
+  }, [playing, singMode, speedIndex, lines.length, activeLine]);
 
   // Keep the highlighted line in view inside the scrolling lyrics area.
   useEffect(() => {
