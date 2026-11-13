@@ -11,7 +11,7 @@ export type TabType = 'overview' | 'arunagirinathar' | 'thiruppugazh' | 'places'
 interface Props {
     sidebarOpen: boolean;
     activeTab: TabType;
-    totalSongs: number;
+    totalSongs: number | null;
     onSelectTab: (tab: TabType) => void;
     onCloseSidebar: () => void;
 }
@@ -75,7 +75,7 @@ export default function Sidebar({ sidebarOpen, activeTab, totalSongs, onSelectTa
                         >
                             <img
                                 src={Constants.THIRUCHENDUR_GOPURAM_URL}
-                                alt="Gopuram"
+                                alt="Lord Murugan"
                                 className="w-5 h-5 rounded-full object-cover border border-amber-400"
                             />
                             <span>புண்ணியத் தலங்கள் (Sacred Abodes)</span>
@@ -93,7 +93,7 @@ export default function Sidebar({ sidebarOpen, activeTab, totalSongs, onSelectTa
                 </div>
 
                 <div className="p-4 border-t border-amber-300 text-center text-[11px] text-stone-600 font-semibold">
-                    {totalSongs || 1326} Songs Indexed • Digital Devotional Treasury
+                    {totalSongs !== null && `${totalSongs} Songs Indexed • `}Digital Devotional Treasury
                 </div>
             </aside>
 

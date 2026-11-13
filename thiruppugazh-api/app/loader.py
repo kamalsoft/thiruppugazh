@@ -1,10 +1,15 @@
 import os
 import json
+import unicodedata
 import logging
 from typing import List, Dict, Optional
 from app.config import INDEX_FILE, PLACES_FILE, SONGS_DIR
 
 logger = logging.getLogger(__name__)
+
+def clean_value(value) -> str:
+    """Collapse runs of whitespace so 'ஆதி   (x)' and 'ஆதி (x)' are the same value."""
+    return " ".join((value or "").split())
 
 class SongDatabase:
     def __init__(self):
@@ -49,7 +54,7 @@ class SongDatabase:
         """Prevent path traversal attacks."""
         base = os.path.realpath(os.getcwd())
         resolved = os.path.realpath(os.path.join(base, rel_path))
-        if not resolved.startswith(base):
+        if os.path.commonpath([base, resolved]) != base:
             raise ValueError(f"Path traversal detected: {rel_path}")
         return resolved
 
@@ -119,18 +124,25 @@ class SongDatabase:
         self._songs_cache[song_number] = song
         return song
 
+    def _distinct_values(self, key: str) -> List[str]:
+        values = {clean_value(song.get(key)) for song in self.songs_index}
+        return sorted(v for v in values if any(c.isalpha() for c in v))
+
+    def first_line(self, song_number: int) -> str:
+        song = self.get_song_by_number(song_number) or {}
+        lines = (song.get("lyrics") or "").split("\n")
+        # Skip musical notation headers such as "---- 3 முறை ----" and "(எடுப்பு - …)".
+        return next((line for line in lines if "\u0B80" <= line[:1] <= "\u0BFF"), "")
+
     def get_ragas(self) -> List[str]:
         if self._ragas_cache is None:
-            self._ragas_cache = sorted({
-                song.get("raga", "") for song in self.songs_index if song.get("raga")
-            })
+            # Some raga fields hold thala text ("கமாஸ், தாளம் - …"); those are not ragas.
+            self._ragas_cache = [v for v in self._distinct_values("raga") if "தாளம்" not in v]
         return self._ragas_cache
 
     def get_thalas(self) -> List[str]:
         if self._thalas_cache is None:
-            self._thalas_cache = sorted({
-                song.get("thala", "") for song in self.songs_index if song.get("thala")
-            })
+            self._thalas_cache = self._distinct_values("thala")
         return self._thalas_cache
 
     def search_songs(
@@ -139,16 +151,21 @@ class SongDatabase:
         place: Optional[str] = None,
         raga: Optional[str] = None,
         thala: Optional[str] = None,
-        chandam: Optional[str] = None
+        chandam: Optional[str] = None,
+        number: Optional[int] = None
     ) -> List[Dict]:
         results = []
+        if query:
+            query = unicodedata.normalize("NFC", query)  # typed Tamil may arrive decomposed
 
         for item in self.songs_index:
-            if place and place.lower() not in item.get("category_or_place", "").lower():
+            if number is not None and int(item.get("song_number", -1)) != number:
                 continue
-            if raga and raga.lower() not in item.get("raga", "").lower():
+            if place and place.lower() != item.get("category_or_place", "").lower():
                 continue
-            if thala and thala.lower() not in item.get("thala", "").lower():
+            if raga and clean_value(raga).lower() not in clean_value(item.get("raga")).lower():
+                continue
+            if thala and clean_value(thala).lower() not in clean_value(item.get("thala")).lower():
                 continue
 
             if chandam:

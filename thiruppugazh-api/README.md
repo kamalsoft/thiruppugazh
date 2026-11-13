@@ -1,133 +1,58 @@
 # Thiruppugazh API
 
-A modern REST API built with Python for the Thiruppugazh project.
-
-## Table of Contents
-
-- [Technical Details](#technical-details)
-- [Prerequisites](#prerequisites)
-- [Virtual Environment Setup](#virtual-environment-setup)
-- [Installation](#installation)
-- [Build](#build)
-- [Running the Application](#running-the-application)
-- [Development](#development)
-
-## Technical Details
-
-- **Language**: Python 3.9+
-- **Framework**: Flask/FastAPI (update as needed)
-- **Package Manager**: pip
-- **Environment Management**: venv
-- **Port**: 5000 (default)
+FastAPI service that serves the Thiruppugazh songs, places, ragas and thalas from the JSON files in `songs/`.
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
-- Python 3.9 or higher
-- pip (Python package manager)
-- Git
+- Python 3.9 or later (the local `.venv` uses 3.14)
 
-Verify installation:
-```bash
-python3 --version
-pip --version
-```
-
-## Virtual Environment Setup
-
-### Create Virtual Environment
+## Setup
 
 ```bash
-python3 -m venv venv
-```
-
-### Activate Virtual Environment
-
-**On macOS/Linux:**
-```bash
-source venv/bin/activate
-```
-
-**On Windows:**
-```bash
-venv\Scripts\activate
-```
-
-### Deactivate Virtual Environment
-
-```bash
-deactivate
-```
-
-## Installation
-
-1. Ensure your virtual environment is activated
-2. Install dependencies:
-
-```bash
+cd thiruppugazh-api
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Verify installation:
+## Run
 
 ```bash
-pip list
+uvicorn app.main:app --reload
 ```
 
-## Build
+The API runs at `http://localhost:8000`. Interactive docs are at `/docs`.
 
-To prepare the application for deployment:
+Set `ALLOWED_ORIGINS` (comma-separated, default `http://localhost:3000`) to allow other browser origins.
+
+## Endpoints
+
+All routes are under `/api`:
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/songs` | Search and filter. Params: `q`, `place`, `raga`, `thala`, `chandam`, `number`, `page`, `limit` (max 100) |
+| GET | `/songs/{song_number}` | One song with lyrics |
+| GET | `/random-song` | A random song |
+| GET | `/places` | Places with song counts and song numbers |
+| GET | `/ragas` | Distinct ragas |
+| GET | `/thalas` | Distinct thalas |
+
+## Data
+
+- `songs/index.json`: one summary entry per song (1326 songs).
+- `songs/place_mappings.json`: place to song-number list (209 places).
+- `songs/song_<n>.json`: full lyrics and chandam for each song.
+
+The loader reads these at import time (`app/loader.py`). Paths are set in `app/config.py`.
+
+## Tests
 
 ```bash
-# Install build tools (if needed)
-pip install build
-
-# Build the package
-python -m build
+pip install pytest httpx
+pytest
 ```
 
-## Running the Application
+## Legacy
 
-### Development Server
-
-```bash
-python app.py
-```
-
-or
-
-```bash
-flask run
-```
-
-The API will be available at `http://localhost:5000`
-
-### Production Server
-
-```bash
-gunicorn -w 4 -b 0.0.0.0:5000 app:app
-```
-
-## Development
-
-### Code Style
-
-Follow PEP 8 standards for Python code.
-
-### Running Tests
-
-```bash
-python -m pytest
-```
-
-### Generating Requirements File
-
-After installing dependencies, export them:
-
-```bash
-pip freeze > requirements.txt
-```
-
----
-
-For more information or issues, please open an issue on GitHub.
+`app.py` is an older Flask version kept for reference. The deployed app is `app/main.py`. Whether to delete `app.py` is an open decision.

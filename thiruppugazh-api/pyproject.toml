@@ -21,3 +21,7 @@ packages = ["app"]
 
 [tool.vercel]
 entrypoint = "thiruppugazh-api.app.main:app"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -11,9 +11,6 @@ type SongSearchParams = {
   raga?: string;
   thala?: string;
   chandam?: string;
-  category?: string;
-  language?: string;
-  composer?: string;
   number?: string | number;
   page?: number;
   limit?: number;
@@ -26,13 +23,8 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
   const url = `${API_CONFIG.BASE_URL}${endpoint}`;
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        ...API_CONFIG.HEADERS,
-        ...options.headers,
-      },
-      ...options,
-    });
+    // No default headers: a GET with Content-Type forces a CORS preflight (BUG-10).
+    const response = await fetch(url, options);
 
     if (!response.ok) {
       throw new Error(`API Error [${response.status}]: ${response.statusText}`);
@@ -62,9 +54,6 @@ export async function fetchSongs(params: SongSearchParams = {}): Promise<Paginat
   appendIfValue(query, 'raga', params.raga);
   appendIfValue(query, 'thala', params.thala);
   appendIfValue(query, 'chandam', params.chandam);
-  appendIfValue(query, 'category', params.category);
-  appendIfValue(query, 'language', params.language);
-  appendIfValue(query, 'composer', params.composer);
   appendIfValue(query, 'number', params.number);
 
   query.append('page', String(params.page || 1));
@@ -84,7 +73,7 @@ export async function fetchSongDetail(songNumber: number): Promise<SongDetail> {
  * Fetch a completely random Thiruppugazh song
  */
 export async function fetchRandomSong(): Promise<SongDetail> {
-  return apiFetch<SongDetail>('/songs/random');
+  return apiFetch<SongDetail>('/random-song');
 }
 
 /**

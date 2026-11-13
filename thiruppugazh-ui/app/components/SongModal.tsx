@@ -7,12 +7,23 @@ import { fetchSongDetail } from '@/lib/api';
 interface Props {
   songNumber: number | null;
   onClose: () => void;
+  isSaved: boolean;
+  onToggleSaved: () => void;
 }
 
-export default function SongModal({ songNumber, onClose }: Props) {
+export default function SongModal({ songNumber, onClose, isSaved, onToggleSaved }: Props) {
   const [song, setSong] = useState<SongDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (songNumber === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [songNumber, onClose]);
 
   useEffect(() => {
     if (songNumber === null || !Number.isFinite(songNumber)) {
@@ -123,7 +134,7 @@ export default function SongModal({ songNumber, onClose }: Props) {
               <h4 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3">
                 பாடல் வரிகள் (Lyrics)
               </h4>
-              <div className="space-y-2 text-stone-900 leading-relaxed font-sans text-base sm:text-lg font-medium">
+              <div className="space-y-1 text-center text-[#3B0000] font-serif text-lg sm:text-xl leading-loose">
                 {lyricsLines.length > 0 ? (
                   lyricsLines.map((line, idx) => (
                     <p key={idx} className="hover:bg-amber-100/50 p-1 rounded transition">
@@ -138,7 +149,14 @@ export default function SongModal({ songNumber, onClose }: Props) {
           </div>
         ) : null}
 
-        <div className="p-4 border-t border-amber-200 bg-[#F7EEDD] flex justify-end">
+        <div className="p-4 border-t border-amber-200 bg-[#F7EEDD] flex justify-between gap-3">
+          <button
+            type="button"
+            onClick={onToggleSaved}
+            className="px-5 py-2 border-2 border-[#8B1A1A] text-[#8B1A1A] text-sm font-bold rounded-xl hover:bg-red-50 transition"
+          >
+            {isSaved ? '✓ சேமித்தது (நீக்க)' : '☆ சேமி'}
+          </button>
           <button
             type="button"
             onClick={onClose}

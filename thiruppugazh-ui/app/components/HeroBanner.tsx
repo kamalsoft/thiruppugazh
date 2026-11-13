@@ -48,7 +48,7 @@ export default function HeroBanner() {
                 {/* Subtle Bottom Gradient and Blended Chant */}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-6 text-center text-amber-100 z-10 backdrop-blur-[1px]">
                     <p className="text-sm sm:text-lg text-amber-100 font-serif italic max-w-xl mx-auto font-semibold drop-shadow-md">
-                        "வேலும் மயிலும் துணை... வெற்றிவேல் முருகனுக்கு அரோகரா!"
+                        &quot;வேலும் மயிலும் துணை... வெற்றிவேல் முருகனுக்கு அரோகரா!&quot;
                     </p>
                 </div>
             </div>

@@ -1,111 +1,41 @@
 # Thiruppugazh App
 
-A modern application for accessing and exploring **Thiruppugazh** content with a clean and user-friendly experience.
+A web app for browsing, searching and reading the Thiruppugazh songs.
 
-## Overview
-
-The Thiruppugazh App helps users browse, search, and read Thiruppugazh songs efficiently.  
-It is intended for learners, devotees, and anyone interested in Tamil devotional literature.
-
-## Key Features
-
-- Browse Thiruppugazh songs
-- Fast search by title, keyword, or song number
-- Clean reading interface
-- Favorites/bookmarks support
-- Responsive experience across devices
-- *(Optional)* Offline access for saved content
-
-## Project Structure
+## Layout
 
 ```text
 thiruppugazh/
-├── README.md
-├── src/              # Application source code
-├── public/           # Static assets
-├── tests/            # Unit/integration tests
-└── ...               # Additional project files
+├── thiruppugazh-ui/    # Next.js frontend (see its README)
+├── thiruppugazh-api/   # FastAPI backend and song data (see its README)
+├── docs/               # ROADMAP.md, BACKLOG.md, APP_DOCUMENTATION.md
+├── vercel.json         # Vercel routing for the API
+└── README.md
 ```
 
 ## Getting Started
 
-### Prerequisites
-
-Install the required runtime/tools for this project (example: Node.js, Python, etc.).
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd thiruppugazh
-   ```
-
-2. Install dependencies:
-   ```bash
-   # Example (choose based on your stack)
-   npm install
-   # or
-   pip install -r requirements.txt
-   ```
-
-3. Run the app:
-   ```bash
-   # Example
-   npm run dev
-   # or
-   python app.py
-   ```
-
-## Configuration
-
-If environment variables are required, create a local config file:
+Run the API and the UI in two terminals:
 
 ```bash
-cp .env.example .env
+# terminal 1
+cd thiruppugazh-api && uvicorn app.main:app --reload
+
+# terminal 2
+cd thiruppugazh-ui && npm install && npm run dev
 ```
 
-Then update values in `.env` as needed.
+The UI calls the live API by default. To use the local API, change `BASE_URL` in `thiruppugazh-ui/lib/config.ts` to `http://localhost:8000/api`.
 
-## Testing
+## Planning
 
-Run tests with:
-
-```bash
-# Example
-npm test
-# or
-pytest
-```
-
-## Build & Deployment
-
-```bash
-# Example
-npm run build
-npm run start
-```
-
-Deploy using your preferred platform (Vercel, Netlify, Docker, VPS, etc.).
-
-## Roadmap
-
-- Improve search accuracy
-- Add transliteration support
-- Add audio playback integration
-- Add multilingual UI support
+- Roadmap: `docs/ROADMAP.md`
+- Backlog with IDs, priorities and done criteria: `docs/BACKLOG.md`
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit changes
-4. Open a pull request
+1. Create a feature branch from `main`.
+2. Make the change and run the checks in each project's README.
+3. Open a pull request.
 
-## License
-
-Specify your license here (e.g., MIT).
-
-## Contact
-
-Add maintainer details or project contact information.
+Contributors are listed in `Contributors.md`.
