@@ -73,6 +73,15 @@ Source: review of thirupugazh.net and kaumaram.com, 2026-11-13. thirupugazh.org 
 
 Guideline (from kaumaram.com, not a task): avoid unfinished labels, jargon, duplicated Tamil and English lists, and decorative clutter.
 
+## Voice (on hold: plan later)
+
+| ID | Pri | Item | Status |
+|---|---|---|---|
+| VOICE-1 | P2 | Lyrics that follow the audio: highlight and scroll with the recording, using a start time per line. | Needs per-line timing. Waiting on the voice plan. |
+| VOICE-2 | P2 | Full-song audio: generate complete songs with the voice profile, starting with the most-searched. | Needs the Tamil voice check (VOICE-3). |
+| VOICE-3 | P1 | Tamil voice quality: Voicebox's language list has no Tamil. Test result pending listening review; choose engine or accept. | Test clip `voicebox-tamil-test.wav` on the Desktop. Transcribe check failed (GPU error). |
+| VOICE-4 | P2 | Deploy the 🔊 audio button for songs that have a recording. Committed locally, not pushed. | Needs push and UI prebuilt deploy. |
+
 ## Suggested order
 
 1. BUG-2 → BUG-3 → BUG-1 (restore a working API, then fix the call path).
