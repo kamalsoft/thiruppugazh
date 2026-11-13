@@ -252,50 +252,135 @@ export default function LandingPage() {
                 </h2>
               </div>
 
-              <div className="prose max-w-none text-stone-800 space-y-6 text-sm sm:text-base leading-relaxed font-medium">
-                <p>
-                  <strong>அருணகிரிநாதர்</strong> பாரம்பரியமாக 15ஆம் நூற்றாண்டைச் சேர்ந்தவர் எனக்
-                  கருதப்படும் சிறந்த தமிழ்ப் புலவரும் முருகப் பெருமானின் பக்தரும் ஆவார். இவர்{' '}
-                  <strong>திருவண்ணாமலையில்</strong> பிறந்தார்.
-                </p>
-                <p>
-                  மரபுவழிச் செய்தியின்படி, இளமையில் வழி தவறிய வாழ்வில் ஈடுபட்ட அருணகிரியார்,
-                  தமக்கையின் அறிவுரையாலும் முருகப் பெருமானின் அருளாலும் மனம் மாறி பக்தி வழிக்குத்
-                  திரும்பினார். அதன் பின்னர் தம் வாழ்வை முருகனைப் பாடுவதற்கு அர்ப்பணித்தார்.
-                </p>
-                <p>
-                  <strong>திருப்புகழ்</strong> என்பது &ldquo;திரு&rdquo; (தெய்வீகம்) + &ldquo;புகழ்&rdquo;
-                  (போற்றுதல்) என்று பொருள்படும். முருகப் பெருமானையும் அவரது தலங்களையும் போற்றி,
-                  சந்தங்களில் அமைந்த 1,300க்கும் மேற்பட்ட பாடல்களின் தொகுப்பே திருப்புகழ்.
-                </p>
-                <p>
-                  திருப்புகழ் தவிர, <em>கந்தர் அனுபூதி</em>, <em>கந்தர் அலங்காரம்</em>, <em>வேல் விருத்தம்</em>{' '}
-                  ஆகிய நூல்களும் இவர் இயற்றியவை.
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 items-start">
+                <figure className="bg-white p-3 rounded-2xl border-2 border-[#E3C896] shadow-sm">
+                  <img
+                    src="/images/arunagirinathar.jpg"
+                    alt="புனிதர் அருணகிரிநாதர்"
+                    width={267}
+                    height={373}
+                    className="w-full h-auto rounded-xl"
+                  />
+                  <figcaption className="mt-3 text-xs text-stone-600 leading-relaxed">
+                    படம்: Mahalakshmi.S,{' '}
+                    <a
+                      href="https://commons.wikimedia.org/wiki/File:Arunagirinathar.jpg"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline text-[#8B1A1A]"
+                    >
+                      Wikimedia Commons
+                    </a>{' '}
+                    · உரிமம்{' '}
+                    <a
+                      href="https://creativecommons.org/licenses/by-sa/4.0/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline text-[#8B1A1A]"
+                    >
+                      CC BY-SA 4.0
+                    </a>
+                  </figcaption>
+                </figure>
 
-                <div>
-                  <ArupadaiVeedu selectedPlace={filters.place} onSelectPlace={openSongsForPlace} />
+                <div className="prose max-w-none text-stone-800 space-y-5 text-sm sm:text-base leading-relaxed font-medium">
+                  <p>
+                    <strong>அருணகிரிநாதர்</strong> ஒரு சிறந்த தமிழ்ப் புலவரும் முருகப் பெருமானின் பக்தரும் ஆவார்.
+                    வரலாற்று ஆய்வாளர்கள் இவரது காலத்தை <strong>கி.பி. 1370 – 1450</strong> எனக் குறிப்பிடுகின்றனர்.
+                    மரபுவழியாக இவர் 15ஆம் நூற்றாண்டைச் சேர்ந்தவர். இவர் <strong>திருவண்ணாமலையில்</strong> பிறந்தார்;
+                    அக்காலத்தில் அது விஜயநகரப் பேரரசின் பகுதியாக இருந்தது.
+                  </p>
+
+                  <div>
+                    <h3 className="text-base font-bold text-[#8B1A1A] mb-2">இளமையும் மாற்றமும்</h3>
+                    <p>
+                      மரபுவழிச் செய்தியின்படி, இளமையில் ஒழுக்கமற்ற வாழ்வில் ஈடுபட்ட அருணகிரியார், தமக்கையின்
+                      பராமரிப்பிலிருந்த காலத்தில் தவறான பழக்கங்களுக்கு ஆளானார். ஒரு கட்டத்தில் தற்கொலை
+                      முயற்சி செய்தபோது முருகப் பெருமான் காப்பாற்றி, அவரை பக்தி வழிக்குத் திருப்பினார் என்பது
+                      நம்பிக்கை. இவரது சொந்தப் பாடல் ஒன்றில் குடும்பத்தின் புறக்கணிப்பு பற்றிய குறிப்பும்
+                      உள்ளது; இந்தக் கதைகளின் விவரங்களில் ஆய்வாளர்களுக்கு கருத்து வேறுபாடு உண்டு.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-bold text-[#8B1A1A] mb-2">திருப்புகழ்</h3>
+                    <p>
+                      <strong>திருப்புகழ்</strong> என்பது &ldquo;திரு&rdquo; (தெய்வீகம்) + &ldquo;புகழ்&rdquo;
+                      (போற்றுதல்) என்று பொருள்படும். முருகப் பெருமானையும் அவரது தலங்களையும் போற்றி, சந்தங்களில்
+                      அமைந்த பாடல்களின் தொகுப்பு இது. மரபுவழியாக இவர் 16,000 பாடல்கள் இயற்றியதாகக் கூறப்படுகிறது;
+                      இன்று கிடைப்பவை சுமார் <strong>1,334</strong> பாடல்கள். இந்தச் செயலியில் <strong>1,326</strong> பாடல்கள் உள்ளன.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-bold text-[#8B1A1A] mb-2">இவரது நூல்கள்</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>திருப்புகழ்</li>
+                      <li>திருவகுப்பு</li>
+                      <li><em>கந்தர் அனுபூதி</em> (51 பாடல்கள்; ஏறத்தாழ 1500 ஆம் ஆண்டு)</li>
+                      <li><em>கந்தர் அலங்காரம்</em></li>
+                      <li><em>கந்தர் அந்தாதி</em></li>
+                      <li><em>வேல் விருத்தம்</em>, <em>மயில் விருத்தம்</em>, <em>செவல் விருத்தம்</em></li>
+                      <li>திருஏழுகூற்றிருக்கை</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-bold text-[#8B1A1A] mb-2">பாடல்கள் மீட்கப்பட்ட வரலாறு</h3>
+                    <p>
+                      நீண்ட காலம் கைப்பிரதிகளில் மட்டுமே இருந்த இப்பாடல்கள் மறக்கப்படும் நிலையில் இருந்தன.
+                      வ.த. சுப்பிரமணிய பிள்ளை அவற்றைத் தேடி எடுத்து, 1894 மற்றும் 1901 ஆம் ஆண்டுகளில்
+                      இரு தொகுதிகளாக வெளியிட்டார். பாடல்களின் மூல இசை இன்று இல்லை; பின்னர் காஞ்சீபுரம் நைனா பிள்ளை,
+                      சித்தூர் சுப்பிரமணியப் பிள்ளை, ஜி.என். பாலசுப்ரமணியம், ஏ.எஸ். ராகவன் போன்ற இசைக் கலைஞர்கள்
+                      பல மெட்டுகளில் அமைத்துப் பாடினர்.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-bold text-[#8B1A1A] mb-2">மரபும் நினைவுகளும்</h3>
+                    <p>
+                      1964 ஆம் ஆண்டு வெளியான திரைப்படத்தில் டி.எம். சௌந்தரராஜன் இவராக நடித்தார்.
+                      இன்றும் பல குடும்பங்களில் திருப்புகழ் பாராயணம் தொடர்கிறது.
+                    </p>
+                  </div>
+
+                  <p className="text-xs text-stone-600 bg-amber-50 border border-amber-300 rounded-xl p-3">
+                    குறிப்பு: இந்தப் பக்கத்தின் வாழ்க்கை விவரங்கள் வரலாற்று ஆய்வுகள் மற்றும் மரபுவழிக் கதைகளின் கலவை.
+                    மரபுவழிச் செய்திகளை வரலாற்று உண்மைகளிலிருந்து பிரித்துப் பார்க்கவும். ஆதாரங்கள்:{' '}
+                    <a href="https://en.wikipedia.org/wiki/Arunagirinathar" target="_blank" rel="noopener noreferrer" className="underline">
+                      Wikipedia (Arunagirinathar)
+                    </a>
+                    ,{' '}
+                    <a href="https://en.wikipedia.org/wiki/Kandar_Anubhuti" target="_blank" rel="noopener noreferrer" className="underline">
+                      Kandar Anubhuti
+                    </a>
+                    .
+                  </p>
                 </div>
+              </div>
 
-                <div>
-                  <h3 className="text-sm font-bold text-[#8B1A1A] mb-3">பிறந்த ஊர்</h3>
-                  <button
-                    type="button"
-                    onClick={() => openSongsForPlace('திருவருணை')}
-                    className="px-4 py-2 rounded-full bg-white border border-red-200 text-red-900 text-sm font-medium hover:bg-red-50 transition"
-                  >
-                    திருவண்ணாமலை (திருவருணை) பாடல்கள்
-                  </button>
-                </div>
+              <div>
+                <ArupadaiVeedu selectedPlace={filters.place} onSelectPlace={openSongsForPlace} />
+              </div>
 
+              <div>
+                <h3 className="text-sm font-bold text-[#8B1A1A] mb-3">பிறந்த ஊர்</h3>
                 <button
                   type="button"
-                  onClick={openSongSearch}
-                  className="px-5 py-3 rounded-xl bg-[#8B1A1A] text-white text-sm font-bold shadow-md hover:bg-[#660000] transition"
+                  onClick={() => openSongsForPlace('திருவருணை')}
+                  className="px-4 py-2 rounded-full bg-white border border-red-200 text-red-900 text-sm font-medium hover:bg-red-50 transition"
                 >
-                  அனைத்துப் பாடல்களையும் காண்க
+                  திருவண்ணாமலை (திருவருணை) பாடல்கள்
                 </button>
               </div>
+
+              <button
+                type="button"
+                onClick={openSongSearch}
+                className="px-5 py-3 rounded-xl bg-[#8B1A1A] text-white text-sm font-bold shadow-md hover:bg-[#660000] transition"
+              >
+                அனைத்துப் பாடல்களையும் காண்க
+              </button>
             </div>
           )}
 
@@ -352,6 +437,8 @@ export default function LandingPage() {
 
       <SongModal
         songNumber={selectedSongNumber}
+        songNumbers={songs.map((song) => song.song_number)}
+        onNavigate={setSelectedSongNumber}
         onClose={() => setSelectedSongNumber(null)}
         isSaved={selectedSongNumber !== null && savedSongs.includes(selectedSongNumber)}
         onToggleSaved={() => {
