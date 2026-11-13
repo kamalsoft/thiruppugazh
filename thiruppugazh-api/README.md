@@ -53,7 +53,6 @@ The loader reads these at import time (`app/loader.py`). Paths are set in `app/c
 ## Tests
 
 ```bash
-pip install pytest httpx
-pytest
+uv run pytest
 ```
 
