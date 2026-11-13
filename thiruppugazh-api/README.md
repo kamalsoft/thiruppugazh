@@ -10,9 +10,7 @@ FastAPI service that serves the Thiruppugazh songs, places, ragas and thalas fro
 
 ```bash
 cd thiruppugazh-api
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+uv sync --group dev   # installs from pyproject.toml and uv.lock (the single dependency source)
 ```
 
 ## Run

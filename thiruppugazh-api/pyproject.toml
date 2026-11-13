@@ -16,6 +16,9 @@ dependencies = [
   "python-dotenv>=1.0.0"
 ]
 
+[dependency-groups]
+dev = ["pytest", "httpx"]
+
 [tool.setuptools]
 packages = ["app"]
 
