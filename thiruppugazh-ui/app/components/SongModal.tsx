@@ -18,6 +18,19 @@ const FONT_SIZES = [16, 18, 20, 22, 26];
 const READER_FONT_SIZES = [22, 26, 30, 34, 38];
 const FONT_KEY = 'lyrics-font-index';
 
+type LyricLang = 'ta' | 'en' | 'meaning';
+const LANG_LABELS: Record<LyricLang, string> = { ta: 'தமிழ்', en: 'English', meaning: 'பொருள் (Meaning)' };
+const NAV_LABELS: Record<LyricLang, { prev: string; next: string }> = {
+  ta: { prev: '← முந்தைய பாடல்', next: 'அடுத்த பாடல் →' },
+  en: { prev: '← Previous song', next: 'Next song →' },
+  meaning: { prev: '← Previous (முந்தைய)', next: 'Next (அடுத்த) →' },
+};
+const MISSING_TEXT: Record<LyricLang, string> = {
+  ta: 'வரிகள் கிடைக்கவில்லை.',
+  en: 'English text for this song has not been added yet.',
+  meaning: 'Meaning for this song has not been added yet.',
+};
+
 // Sing-along speeds, in lines per minute.
 const SPEEDS = [
   { label: 'மெதுவாக', linesPerMinute: 8 },
@@ -58,6 +71,7 @@ export default function SongModal({
   const [error, setError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const [readerMode, setReaderMode] = useState(false);
+  const [lyricLang, setLyricLang] = useState<LyricLang>('ta');
   const [simpleReading, setSimpleReading] = useState(false);
   const [singMode, setSingMode] = useState(false);
   const [activeLine, setActiveLine] = useState(0);
@@ -174,9 +188,13 @@ export default function SongModal({
       : [];
 
   // Simple reading keeps only sung lines; the classic view shows everything, as written.
-  const lines = simpleReading
-    ? rawLines.filter((line) => startsWithTamil(line.trim())).map(simplify)
-    : rawLines;
+  const translated = lyricLang === 'en' ? song?.english : lyricLang === 'meaning' ? song?.meaning : undefined;
+  const lines: string[] =
+    lyricLang === 'ta'
+      ? simpleReading
+        ? rawLines.filter((line) => startsWithTamil(line.trim())).map(simplify)
+        : rawLines
+      : translated ?? [];
 
   // Sing-along: advance one line per beat while playing, and stop at the last line.
   useEffect(() => {
@@ -317,6 +335,19 @@ export default function SongModal({
               </div>
 
               <div className="flex flex-wrap gap-2">
+                <div className="flex gap-2" role="group" aria-label="மொழி">
+                  {(['ta', 'en', 'meaning'] as const).map((l) => (
+                    <button
+                      key={l}
+                      type="button"
+                      onClick={() => setLyricLang(l)}
+                      aria-pressed={lyricLang === l}
+                      className={toggleButton(lyricLang === l)}
+                    >
+                      {LANG_LABELS[l]}
+                    </button>
+                  ))}
+                </div>
                 <button
                   type="button"
                   onClick={() => setSimpleReading((v) => !v)}
@@ -430,7 +461,7 @@ export default function SongModal({
                       </p>
                     ))
                   ) : (
-                    <p className="text-stone-500 text-base">வரிகள் கிடைக்கவில்லை.</p>
+                    <p className="text-stone-500 text-base">{MISSING_TEXT[lyricLang]}</p>
                   )}
                 </div>
               )}
@@ -441,10 +472,10 @@ export default function SongModal({
         <div className="flex-none p-3 sm:p-4 border-t border-amber-200 bg-[#F7EEDD] flex flex-wrap items-center justify-between gap-3">
           <div className="flex gap-2">
             <button type="button" onClick={() => previous !== null && onNavigate(previous)} disabled={previous === null} className={navButton}>
-              ← முந்தைய
+              {NAV_LABELS[lyricLang].prev}
             </button>
             <button type="button" onClick={() => next !== null && onNavigate(next)} disabled={next === null} className={navButton}>
-              அடுத்த →
+              {NAV_LABELS[lyricLang].next}
             </button>
           </div>
           <div className="flex gap-2">
