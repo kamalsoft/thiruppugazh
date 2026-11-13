@@ -22,6 +22,7 @@ class SongDetail(BaseModel):
     full_text: Optional[str] = None
     english: Optional[List[str]] = None
     meaning: Optional[List[str]] = None
+    translation_note: Optional[str] = None
 
     model_config = ConfigDict(extra="allow")
 
