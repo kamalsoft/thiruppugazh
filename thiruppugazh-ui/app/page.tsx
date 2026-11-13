@@ -16,6 +16,18 @@ const FONT_SIZES = [14, 16, 18, 20, 22];
 const DEFAULT_FONT_SIZE = 16;
 const FEATURED_SONG_NUMBER = 1;
 
+// Works by Arunagirinathar other than Thiruppugazh. Texts are added later; notes only where verified.
+const ARUNAGIRI_WORKS = [
+  { tamil: 'திருவகுப்பு', english: 'Tiruvaguppu', note: undefined },
+  { tamil: 'கந்தர் அனுபூதி', english: 'Kandar Anubhuti', note: '51 பாடல்கள்; ஏறத்தாழ 1500 ஆம் ஆண்டு' },
+  { tamil: 'கந்தர் அலங்காரம்', english: 'Kandar Alankaram', note: 'கந்தர் அனுபூதியின் துணைநூல்' },
+  { tamil: 'கந்தர் அந்தாதி', english: 'Kandar Andadhi', note: undefined },
+  { tamil: 'வேல் விருத்தம்', english: 'Vel Viruttam', note: undefined },
+  { tamil: 'மயில் விருத்தம்', english: 'Mayil Viruttam', note: undefined },
+  { tamil: 'செவல் விருத்தம்', english: 'Seval Viruttam', note: undefined },
+  { tamil: 'திருஏழுகூற்றிருக்கை', english: 'Tiruelukutrirukkai', note: undefined },
+];
+
 // The API sends lyrics as one string; the first line is the one shown on the card.
 const firstLineOf = (song: SongDetail): string => {
   const lyrics: unknown = song.lyrics;
@@ -362,16 +374,17 @@ export default function LandingPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-base font-bold text-[#8B1A1A] mb-2">இவரது நூல்கள்</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>திருப்புகழ்</li>
-                      <li>திருவகுப்பு</li>
-                      <li><em>கந்தர் அனுபூதி</em> (51 பாடல்கள்; ஏறத்தாழ 1500 ஆம் ஆண்டு)</li>
-                      <li><em>கந்தர் அலங்காரம்</em></li>
-                      <li><em>கந்தர் அந்தாதி</em></li>
-                      <li><em>வேல் விருத்தம்</em>, <em>மயில் விருத்தம்</em>, <em>செவல் விருத்தம்</em></li>
-                      <li>திருஏழுகூற்றிருக்கை</li>
-                    </ul>
+                    <h3 className="text-base font-bold text-[#8B1A1A] mb-3">இவரது நூல்கள்</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 not-prose">
+                      {ARUNAGIRI_WORKS.map((work) => (
+                        <div key={work.tamil} className="p-4 rounded-2xl bg-white border-2 border-[#E3C896] space-y-1">
+                          <p className="text-lg font-bold text-[#660000]">{work.tamil}</p>
+                          <p className="text-sm text-stone-600">{work.english}</p>
+                          {work.note && <p className="text-sm text-stone-700">{work.note}</p>}
+                          <p className="text-xs text-stone-500">பாடல்கள் இன்னும் சேர்க்கப்படவில்லை.</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   <div>
