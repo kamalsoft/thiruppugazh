@@ -64,6 +64,10 @@ export default function SongModal({
   const [playing, setPlaying] = useState(false);
   const [speedIndex, setSpeedIndex] = useState(1);
   const [fontIndex, setFontIndex] = useState(1);
+  const [shareNote, setShareNote] = useState<string | null>(null);
+  const [hasAudio, setHasAudio] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const activeRef = useRef<HTMLButtonElement | null>(null);
@@ -196,6 +200,43 @@ export default function SongModal({
     return () => clearInterval(timer);
   }, [playing, singMode, speedIndex, lines.length, activeLine]);
 
+  // Recorded audio for this song, if one exists at /audio/<n>.wav.
+  useEffect(() => {
+    setHasAudio(false);
+    setIsPlaying(false);
+    if (songNumber === null) return;
+    let cancelled = false;
+    fetch(`/audio/${songNumber}.wav`, { method: 'HEAD' })
+      .then((r) => {
+        if (!cancelled) setHasAudio(r.ok);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+      audioRef.current?.pause();
+    };
+  }, [songNumber]);
+
+  // Copies a link to this song; the page opens it when the link is used.
+  const shareSong = async () => {
+    if (songNumber === null) return;
+    const link = `${window.location.origin}/?song=${songNumber}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      setShareNote('✓ இணைப்பு நகலெடுக்கப்பட்டது');
+    } catch {
+      setShareNote(link);
+    }
+    window.setTimeout(() => setShareNote(null), 2500);
+  };
+
+  const toggleAudio = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) audio.play();
+    else audio.pause();
+  };
+
   // Keep the highlighted line in view inside the scrolling lyrics area.
   useEffect(() => {
     if (singMode) activeRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -320,6 +361,16 @@ export default function SongModal({
               </div>
 
               <div className="flex flex-wrap gap-2">
+                {hasAudio && (
+                  <button
+                    type="button"
+                    onClick={toggleAudio}
+                    aria-pressed={isPlaying}
+                    className={toggleButton(isPlaying)}
+                  >
+                    {isPlaying ? '⏸ நிறுத்து' : '🔊 கேள்'}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => setSimpleReading((v) => !v)}
@@ -397,6 +448,17 @@ export default function SongModal({
               </div>
             )}
 
+            {hasAudio && (
+              <audio
+                ref={audioRef}
+                src={`/audio/${songNumber}.wav`}
+                preload="none"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => setIsPlaying(false)}
+              />
+            )}
+
             {/* Only this area scrolls; the header, details and buttons stay in place. */}
             <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-5 py-4 space-y-5">
               {singMode ? (
@@ -423,7 +485,7 @@ export default function SongModal({
                 </div>
               ) : (
                 <div
-                  className="space-y-1 text-center text-[#3B0000] font-serif leading-loose"
+                  className="print-area space-y-1 text-center text-[#3B0000] font-serif leading-loose"
                   style={{ fontSize: lyricsSize }}
                 >
                   {lines.length > 0 ? (
@@ -451,6 +513,20 @@ export default function SongModal({
             </button>
           </div>
           <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={shareSong}
+              className="h-11 px-4 border-2 border-[#8B1A1A] text-[#8B1A1A] text-base font-bold rounded-xl hover:bg-red-50 transition"
+            >
+              {shareNote ?? '🔗 பகிர்'}
+            </button>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="h-11 px-4 border-2 border-[#8B1A1A] text-[#8B1A1A] text-base font-bold rounded-xl hover:bg-red-50 transition"
+            >
+              🖨 அச்சிடு
+            </button>
             <button
               type="button"
               onClick={onToggleSaved}

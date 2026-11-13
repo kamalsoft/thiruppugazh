@@ -6,3 +6,20 @@ body {
   background-color: #FFFDF9;
   color: #1C1917;
 }
+/* Print only the lyrics of the open song. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    font-size: 20pt;
+  }
+}

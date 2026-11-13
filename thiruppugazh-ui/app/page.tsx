@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { fetchSongs, fetchPlaces, fetchRagas, fetchThalas } from '@/lib/api';
-import { SongSummary, PlaceMapping } from '@/lib/types';
+import { fetchSongs, fetchPlaces, fetchRagas, fetchThalas, fetchSongDetail } from '@/lib/api';
+import { SongSummary, PlaceMapping, SongDetail } from '@/lib/types';
 import Header from './components/Header';
 import Sidebar, { TabType } from './components/Sidebar';
 import HeroBanner from './components/HeroBanner';
@@ -15,6 +15,13 @@ import ArupadaiVeedu from './components/ArupadaiVeedu';
 const FONT_SIZES = [14, 16, 18, 20, 22];
 const DEFAULT_FONT_SIZE = 16;
 const FEATURED_SONG_NUMBER = 1;
+
+// The API sends lyrics as one string; the first line is the one shown on the card.
+const firstLineOf = (song: SongDetail): string => {
+  const lyrics: unknown = song.lyrics;
+  const lines = Array.isArray(lyrics) ? lyrics : typeof lyrics === 'string' ? lyrics.split('\n') : [];
+  return lines.find((line) => /^[\u0B80-\u0BFF]/.test(line.trim()))?.trim() ?? '';
+};
 
 type Filters = {
   q: string;
@@ -73,6 +80,7 @@ export default function LandingPage() {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [indexedTotal, setIndexedTotal] = useState<number | null>(null);
+  const [songOfDay, setSongOfDay] = useState<SongDetail | null>(null);
   const [savedSongs, setSavedSongs] = useState<number[]>([]);
   const [sort, setSort] = useState('number');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
@@ -91,6 +99,30 @@ export default function LandingPage() {
       .then((data) => setIndexedTotal(data.total))
       .catch((err) => console.error('Error loading song count:', err));
   }, []);
+
+  // Song of the day: the same song for everyone on a given date.
+  useEffect(() => {
+    const total = indexedTotal ?? 1326;
+    if (total < 1) return;
+    const dayNumber = Math.floor(Date.now() / 86400000);
+    const number = (dayNumber % total) + 1;
+    fetchSongDetail(number)
+      .then(setSongOfDay)
+      .catch((err) => console.error('Error loading song of the day:', err));
+  }, [indexedTotal]);
+
+  // Share links: ?song=243 opens that song, and the address follows the open song.
+  useEffect(() => {
+    const requested = Number(new URLSearchParams(window.location.search).get('song'));
+    if (Number.isInteger(requested) && requested > 0) setSelectedSongNumber(requested);
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (selectedSongNumber !== null) url.searchParams.set('song', String(selectedSongNumber));
+    else url.searchParams.delete('song');
+    window.history.replaceState(null, '', url);
+  }, [selectedSongNumber]);
 
   // Saved songs live in this browser only; blocked storage just means they don't persist.
   useEffect(() => {
@@ -237,6 +269,23 @@ export default function LandingPage() {
                     பாடல் {FEATURED_SONG_NUMBER} படிக்க
                   </button>
                 </div>
+
+                {songOfDay && (
+                  <div className="mt-6 p-5 rounded-2xl bg-amber-50 border-2 border-[#D4AF37] space-y-3">
+                    <p className="text-sm font-bold text-[#8B1A1A] uppercase tracking-wider">இன்றைய பாடல் (Song of the day)</p>
+                    <p className="text-base text-stone-700">
+                      {songOfDay.title} · {songOfDay.category_or_place}
+                    </p>
+                    <p className="text-lg text-[#5C0000] font-serif">{firstLineOf(songOfDay)}</p>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSongNumber(songOfDay.song_number)}
+                      className="px-5 py-3 rounded-xl bg-[#8B1A1A] text-white text-base font-bold hover:bg-[#660000] transition"
+                    >
+                      இன்றைய பாடலைப் படிக்க
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}

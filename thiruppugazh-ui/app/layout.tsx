@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css'; // <-- THIS IMPORT IS CRITICAL
+import ServiceWorker from './components/ServiceWorker';
 
 export const metadata: Metadata = {
   title: 'Thiruppugazh Digital Treasury',
@@ -14,7 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ta">
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorker />
+      </body>
     </html>
   );
 }
