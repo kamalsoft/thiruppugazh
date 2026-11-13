@@ -137,3 +137,8 @@ def test_default_sort_is_song_number():
 
 def test_invalid_sort_is_rejected():
     assert client.get("/api/songs", params={"sort": "title"}).status_code == 422
+
+
+@pytest.mark.parametrize("url", ["/api/places", "/api/ragas", "/api/thalas"])
+def test_static_lists_are_cacheable(url):
+    assert "max-age" in client.get(url).headers["cache-control"]

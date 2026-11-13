@@ -1,5 +1,5 @@
 import random
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from typing import Optional, List
 from app.models import SongSummary, SongDetail, PlaceMapping, PaginatedSongResponse
 from app.loader import db, sort_songs
@@ -75,7 +75,8 @@ def get_song_detail(song_number: int):
 # 4. Metadata List Endpoints (Places, Ragas, Thalas)
 # -------------------------------------------------------------------
 @router.get("/places", response_model=List[PlaceMapping])
-def get_places():
+def get_places(response: Response):
+    response.headers["Cache-Control"] = "public, max-age=86400"  # static data, changes only on redeploy
     """
     Get all unique places/temples with total song counts and song number lists.
     """
@@ -83,14 +84,16 @@ def get_places():
     return [p for p in db.places_index if "§" not in p["place"]]
 
 @router.get("/ragas", response_model=List[str])
-def get_ragas():
+def get_ragas(response: Response):
+    response.headers["Cache-Control"] = "public, max-age=86400"  # static data, changes only on redeploy
     """
     Get a list of all distinct ragas present across the dataset.
     """
     return db.get_ragas()
 
 @router.get("/thalas", response_model=List[str])
-def get_thalas():
+def get_thalas(response: Response):
+    response.headers["Cache-Control"] = "public, max-age=86400"  # static data, changes only on redeploy
     """
     Get a list of all distinct thalas present across the dataset.
     """

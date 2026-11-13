@@ -46,6 +46,12 @@ All routes are under `/api`:
 
 The loader reads these at import time (`app/loader.py`). Paths are set in `app/config.py`.
 
+## Deployment (Vercel)
+
+- The API deploys from the repo root with `vercel.json`, which runs `thiruppugazh-api/app/main.py`.
+- Set `ALLOWED_ORIGINS` on the Vercel project to every UI origin, comma-separated, for example `http://localhost:3000,https://thiruppugazh-ui.vercel.app`. Browsers block the UI without it.
+- Redeploy after changing environment variables; they only apply to new deployments.
+
 ## Tests
 
 ```bash
