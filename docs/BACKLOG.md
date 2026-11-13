@@ -56,7 +56,7 @@ Status as of 2026-11-12. IDs are stable; reference them in commits and PRs.
 | DEBT-8 | P2 | Measured. Loading all 1326 songs takes about 0.2–0.3 s and about 54 MB locally; acceptable. Revisit only if Vercel cold starts are slow. |
 | DEBT-9 | P2 | Done. `/places`, `/ragas`, `/thalas` send `Cache-Control: public, max-age=86400`; test added. |
 | DATA-1 | P1 | Done in the API. `app/loader.py` collapses whitespace, drops punctuation-only values, removes thala text from raga values, and de-duplicates. `/ragas` 172 values, `/thalas` 95. Source `songs/index.json` still holds the dirty values. |
-| DATA-2 | P2 | Corrupted place names: 9 entries in `songs/place_mappings.json` (36 index rows). `¡` probably stands for `ூ` (e.g. `வயலு¡ர்` → `வயலூர்`, `திருநல்லு¡ர்` → `திருநல்லூர்`); `§` is unknown. The API hides the two `§` names only. Needs confirming and fixing in the source files. |
+| DATA-2 | P2 | Corrupted Tamil text in the source data. Not only place names: `¡` appears 80 times in `songs/index.json` and `place_mappings.json`, and in 74 lyric lines across the song files. `¡` before ர or ல looks like `ூ` (`வயலு¡ர` → `வயலூர`), but `¡£` looks like `ரீ` (`வேதபு ¡£சுரர்` → `வேதபுரீசுரர்`), and `§` is unknown. A single replacement would damage correct text, so the data is unchanged. Needs a confirmed mapping from a Tamil reader, then a script that changes only the confirmed patterns in index, place mappings, and song files. |
 
 ## UX (from reference sites: thirupugazh.net, kaumaram.com)
 
