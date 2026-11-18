@@ -3,7 +3,7 @@ import json
 import unicodedata
 import logging
 from typing import List, Dict, Optional
-from app.config import INDEX_FILE, PLACES_FILE, SONGS_DIR
+from app.config import INDEX_FILE, PLACES_FILE, THIRUPPUGAZH_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -120,10 +120,10 @@ class SongDatabase:
         song: Dict = dict(index_item)
 
         try:
-            rel_path = index_item.get("file_path", f"songs/song_{song_number}.json")
+            rel_path = index_item.get("file_path", f"songs/thirupugazh/song_{song_number}.json")
             file_path = self._safe_path(rel_path)
             if not os.path.exists(file_path):
-                file_path = os.path.join(str(SONGS_DIR), f"song_{song_number}.json")
+                file_path = os.path.join(str(THIRUPPUGAZH_DIR), f"song_{song_number}.json")
 
             if os.path.exists(file_path):
                 with open(file_path, "r", encoding="utf-8") as f:

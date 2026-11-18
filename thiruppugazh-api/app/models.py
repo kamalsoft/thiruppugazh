@@ -33,3 +33,14 @@ class PaginatedSongResponse(BaseModel):
     page: int
     limit: int
     results: List[SongSummary]
+
+class TextSummary(BaseModel):
+    id: str
+    name: str
+    eyebrow: str
+    title: str
+    author: str
+    source: str
+
+class TextDetail(TextSummary):
+    text: str

@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.routes import songs
+from app.routes import songs, texts
 
 app = FastAPI(
     title="Thiruppugazh Search API",
@@ -30,6 +30,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 app.include_router(songs.router)
+app.include_router(texts.router)
 
 @app.get("/")
 def root():

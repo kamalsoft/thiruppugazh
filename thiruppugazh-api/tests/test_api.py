@@ -142,3 +142,52 @@ def test_invalid_sort_is_rejected():
 @pytest.mark.parametrize("url", ["/api/places", "/api/ragas", "/api/thalas"])
 def test_static_lists_are_cacheable(url):
     assert "max-age" in client.get(url).headers["cache-control"]
+
+
+def test_texts_list_has_summaries_without_verses():
+    r = client.get("/api/texts")
+    assert r.status_code == 200
+    items = r.json()
+    assert {"kandha-guru-kavacham", "kandar-anubhuti", "kandar-alankaram"} <= {t["id"] for t in items}
+    assert all("text" not in t for t in items)
+    assert "thirupugazh" not in {t["id"] for t in items}
+
+
+def test_text_detail_has_verses():
+    r = client.get("/api/texts/kandar-anubhuti")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["name"] and body["text"]
+
+
+def test_unknown_text_returns_404():
+    assert client.get("/api/texts/no-such-text").status_code == 404
+
+
+def test_malformed_text_id_is_rejected():
+    assert client.get("/api/texts/Bad_ID").status_code == 422
+
+
+def _write_text(folder, name, **fields):
+    import json
+
+    base = {"id": name, "name": "n", "eyebrow": "e", "title": "t", "author": "a", "source": "s", "text": "v"}
+    base.update(fields)
+    (folder / name).mkdir(exist_ok=True)
+    (folder / name / f"{name}.json").write_text(json.dumps(base), encoding="utf-8")
+
+
+def test_bad_text_files_are_skipped_and_good_ones_load(tmp_path):
+    from app.routes.texts import load_texts
+
+    _write_text(tmp_path, "good")
+    _write_text(tmp_path, "wrong-id", id="other")
+    _write_text(tmp_path, "no-author", author=None, **{})
+    (tmp_path / "broken").mkdir()
+    (tmp_path / "broken" / "broken.json").write_text('{"id": "broken", "name": "x"', encoding="utf-8")
+    (tmp_path / "missing").mkdir()
+    (tmp_path / "missing" / "missing.json").write_text('{"id": "missing"}', encoding="utf-8")
+
+    loaded = load_texts(tmp_path)
+
+    assert set(loaded) == {"good"}
