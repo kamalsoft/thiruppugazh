@@ -547,5 +547,4 @@ export const KANDHA_GURU_KAVACHAM = `        விநாயகர் வாழ�
 export const KANDHA_GURU_KAVACHAM_CREDIT = {
   author: "ஸ்ரீமத் சத்குரு சாந்தானந்த சுவாமிகள்",
   source: "Project Madurai",
-  sourceUrl: "https://www.projectmadurai.org/pm_etexts/pdf/pm0034_03.pdf",
 };
