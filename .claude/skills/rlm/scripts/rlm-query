@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Run one chunk prompt through a headless subagent.
+# Writes OUTPUT_FILE only on success; a failed run leaves no output behind.
 set -euo pipefail
 
 PROMPT_FILE="$1"
@@ -7,7 +9,8 @@ OUTPUT_FILE="$2"
 DEPTH="${RLM_DEPTH:-0}"
 MAX_DEPTH="${RLM_MAX_DEPTH:-3}"
 MAX_PARALLEL="${RLM_MAX_PARALLEL:-8}"
-LOCK_DIR="/tmp/rlm-locks"
+TIMEOUT_SECS="${RLM_TIMEOUT:-600}"
+LOCK_DIR="${RLM_LOCK_DIR:-${TMPDIR:-/tmp}/rlm-locks-$(id -u)}"
 
 if [ "$DEPTH" -ge "$MAX_DEPTH" ]; then
   echo "Error: RLM_MAX_DEPTH ($MAX_DEPTH) reached. Process directly without spawning." >&2
@@ -16,25 +19,45 @@ fi
 
 mkdir -p "$LOCK_DIR"
 
-# Acquire an atomic slot using mkdir
+# A slot is a directory holding the PID of the process that owns it.
+# A slot whose owner has exited (crash, kill -9) is moved aside and removed.
+reclaim_if_stale() {
+  local slot="$1" owner
+  owner=$(cat "$slot/pid" 2>/dev/null || true)
+  if [ -n "$owner" ] && ! kill -0 "$owner" 2>/dev/null; then
+    mv "$slot" "$slot.reclaim.$$" 2>/dev/null && rm -rf "$slot.reclaim.$$"
+  fi
+}
+
 acquire_slot() {
   while true; do
     for i in $(seq 1 "$MAX_PARALLEL"); do
-      if mkdir "$LOCK_DIR/slot_$i" 2>/dev/null; then
-        echo "$i"
+      slot="$LOCK_DIR/slot_$i"
+      if mkdir "$slot" 2>/dev/null; then
+        echo $$ > "$slot/pid"
+        echo "$slot"
         return
       fi
+      reclaim_if_stale "$slot"
     done
     sleep 0.5
   done
 }
 
 SLOT=$(acquire_slot)
-trap 'rmdir "$LOCK_DIR/slot_$SLOT" 2>/dev/null || true' EXIT
+TMP_OUT="$OUTPUT_FILE.tmp.$$"
+trap 'rm -f "$TMP_OUT"; rm -rf "$SLOT"' EXIT
+trap 'exit 130' INT TERM HUP
 
 NEXT_DEPTH=$((DEPTH + 1))
 
-# Spawn stateless subagent with incremented depth
-RLM_DEPTH="$NEXT_DEPTH" claude -p "$(cat "$PROMPT_FILE")" \
-  --allowedTools "Read,Grep,Glob,Bash" \
-  > "$OUTPUT_FILE"
+# perl's alarm enforces the timeout, since macOS ships without timeout(1).
+# The prompt goes on stdin so large chunks don't hit the argument-size limit.
+if RLM_DEPTH="$NEXT_DEPTH" perl -e 'alarm shift; exec @ARGV' "$TIMEOUT_SECS" \
+     claude -p --allowedTools "Read,Grep,Glob" < "$PROMPT_FILE" > "$TMP_OUT" \
+   && [ -s "$TMP_OUT" ]; then
+  mv "$TMP_OUT" "$OUTPUT_FILE"
+else
+  echo "rlm-query: failed or produced no output for $PROMPT_FILE" >&2
+  exit 1
+fi
