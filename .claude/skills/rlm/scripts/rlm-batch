@@ -1,15 +1,48 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# Fan out one rlm-query per chunk prompt. Exits non-zero if any chunk failed.
+set -uo pipefail
 
 CHUNKS_DIR="$1"
 OUT_DIR="$2"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MAX_RUNS="${RLM_MAX_RUNS:-50}"
+
+shopt -s nullglob
+chunks=("$CHUNKS_DIR"/*.md)
+shopt -u nullglob
+
+if [ "${#chunks[@]}" -eq 0 ]; then
+  echo "rlm-batch: no .md chunks in $CHUNKS_DIR" >&2
+  exit 1
+fi
+if [ "${#chunks[@]}" -gt "$MAX_RUNS" ]; then
+  echo "rlm-batch: ${#chunks[@]} chunks exceeds RLM_MAX_RUNS ($MAX_RUNS). Use bigger chunks or raise the cap." >&2
+  exit 1
+fi
 
 mkdir -p "$OUT_DIR"
+export RLM_LOCK_DIR="$OUT_DIR/.locks"  # per run, so runs don't share slots
 
-for prompt_file in "$CHUNKS_DIR"/*.md; do
+pids=()
+names=()
+for prompt_file in "${chunks[@]}"; do
   base=$(basename "$prompt_file" .md)
+  rm -f "$OUT_DIR/${base}.out.md"  # a stale result must not pass as this run's
   "$SCRIPT_DIR/rlm-query" "$prompt_file" "$OUT_DIR/${base}.out.md" &
+  pids+=("$!")
+  names+=("$base")
 done
 
-wait
+failed=0
+for i in "${!pids[@]}"; do
+  if wait "${pids[$i]}"; then
+    echo "ok      ${names[$i]}"
+  else
+    echo "FAILED  ${names[$i]}"
+    failed=$((failed + 1))
+  fi
+done
+
+rmdir "$RLM_LOCK_DIR" 2>/dev/null || true
+echo "$(( ${#pids[@]} - failed ))/${#pids[@]} chunks ok"
+[ "$failed" -eq 0 ]

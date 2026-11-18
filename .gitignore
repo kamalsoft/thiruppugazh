@@ -1,3 +1,4 @@
 .DS_Store
 .vercel
-test.md
+.claude/.code-review-state
+.claude/.code-review-blocks
