@@ -50,10 +50,11 @@ All routes are under `/api`:
 
 ## Data
 
-- `songs/thirupugazh/index.json`: one summary entry per Thiruppugazh song (1326 songs).
-- `songs/thirupugazh/place_mappings.json`: place to song-number list (209 places).
-- `songs/thirupugazh/song_<n>.json`: full lyrics and chandam for each song.
-- `songs/<name>/<name>.json`: one folder per other song, named after the song. These are served by `/api/texts`.
+- `songs/arunagirinathar/thirupugazh/index.json`: one summary entry per Thiruppugazh song (1326 songs).
+- `songs/arunagirinathar/thirupugazh/place_mappings.json`: place to song-number list (209 places).
+- `songs/arunagirinathar/thirupugazh/song_<n>.json`: full lyrics and chandam for each song.
+- `songs/<author>/author.json`: the author's id and display name.
+- `songs/<author>/<song>/<song>.json`: one folder per other song, named after the song. These are served by `/api/authors` and `/api/texts`.
 
 The loader reads these at import time (`app/loader.py`). Paths are set in `app/config.py`.
 

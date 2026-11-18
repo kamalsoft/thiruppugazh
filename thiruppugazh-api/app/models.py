@@ -40,7 +40,19 @@ class TextSummary(BaseModel):
     eyebrow: str
     title: str
     author: str
+    author_id: str
     source: str
 
 class TextDetail(TextSummary):
     text: str
+
+class AuthorSummary(BaseModel):
+    id: str
+    name: str
+    count: int
+
+class TextPage(BaseModel):
+    total: int
+    page: int
+    limit: int
+    results: List[TextSummary]

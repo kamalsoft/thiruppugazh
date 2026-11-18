@@ -4,15 +4,17 @@ Rule: the API is the source of truth for every song text. It stores and delivers
 
 ## Where things are
 
-- `thiruppugazh-api/songs/<id>/<id>.json`: one folder per song, named after the song. The folder name is the id.
-- `GET /api/texts`: list of texts (id, name, eyebrow, title, author, source). No verses.
+- `thiruppugazh-api/songs/<author>/author.json`: the author's id and display name.
+- `thiruppugazh-api/songs/<author>/<id>/<id>.json`: one folder per song, under its author. The folder name is the id.
+- `GET /api/authors`: authors with song counts.
+- `GET /api/texts?author=<id>&page=1&limit=6`: one page of songs (id, name, eyebrow, title, author, author_id, source). No verses.
 - `GET /api/texts/<id>`: one text with its verses in `text`.
 - `thiruppugazh-ui/app/components/SongTexts.tsx`: the tab. It loads the list and the chosen text from the API.
 - `thiruppugazh-ui/app/components/SongTextView.tsx`: Read and Sing views. It renders the text it is given.
 
 ## How to add a text
 
-1. Create the folder `thiruppugazh-api/songs/<id>/` and the file `<id>.json` inside it, with these fields:
+1. Create the folder `thiruppugazh-api/songs/<author>/<id>/` and the file `<id>.json` inside it, with these fields. The author folder must already have an `author.json`:
 
    ```json
    {
@@ -26,10 +28,10 @@ Rule: the API is the source of truth for every song text. It stores and delivers
    }
    ```
 
-   - `id` must match `^[a-z0-9-]+$` and be the folder name.
+   - `id` must match `^[a-z0-9-]+$` and be the folder name. It must be unique across all authors.
    - In `text`, a verse ends with three or more dots, a bracketed number, and nothing after it, for example `...... (5)`.
    - A file that fails validation, or whose `id` does not match its folder name, is logged and skipped. The other songs still load. Check the API log after you add a file.
-   - The `songs/thirupugazh/` folder is reserved for the Thiruppugazh songs and is never listed here.
+   - The `thirupugazh` folder under `arunagirinathar/` is reserved for the Thiruppugazh songs and is never listed here.
 2. Run the API tests: `cd thiruppugazh-api && uv run pytest -q`.
 3. Start the API and check `GET /api/texts/<id>`.
 4. The UI needs no change. The new text appears in the tab.

@@ -3,7 +3,7 @@ api.ts
 */
 
 import { API_CONFIG } from './config';
-import { PaginatedResponse, SongDetail, PlaceMapping, SongTextSummary, SongTextDetail } from './types';
+import { PaginatedResponse, SongDetail, PlaceMapping, SongTextPage, SongTextDetail, AuthorSummary } from './types';
 
 type SongSearchParams = {
   q?: string;
@@ -102,10 +102,21 @@ export async function fetchThalas(): Promise<string[]> {
 }
 
 /**
- * Fetch the list of song texts (without verses)
+ * Fetch the authors who have songs outside Thiruppugazh
  */
-export async function fetchSongTexts(): Promise<SongTextSummary[]> {
-  return apiFetch<SongTextSummary[]>('/texts');
+export async function fetchAuthors(): Promise<AuthorSummary[]> {
+  return apiFetch<AuthorSummary[]>('/authors');
+}
+
+/**
+ * Fetch one page of song texts (without verses), optionally for one author
+ */
+export async function fetchSongTexts(params: { author?: string; page?: number; limit?: number } = {}): Promise<SongTextPage> {
+  const query = new URLSearchParams();
+  appendIfValue(query, 'author', params.author);
+  appendIfValue(query, 'page', params.page);
+  appendIfValue(query, 'limit', params.limit);
+  return apiFetch<SongTextPage>(`/texts?${query.toString()}`);
 }
 
 /**
