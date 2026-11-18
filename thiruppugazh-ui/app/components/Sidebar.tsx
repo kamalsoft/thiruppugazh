@@ -74,7 +74,7 @@ export default function Sidebar({ sidebarOpen, activeTab, totalSongs, onSelectTa
                                 }`}
                         >
                             <GoldenVelIcon className="w-5 h-5" />
-                            <span>பிற பாடல்கள் (Texts)</span>
+                            <span>ஆசிரியர்கள் (Authors)</span>
                         </button>
 
                         <button
