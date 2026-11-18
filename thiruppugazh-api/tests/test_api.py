@@ -148,7 +148,7 @@ def test_texts_list_is_paged_and_has_no_verses():
     r = client.get("/api/texts", params={"limit": 2})
     assert r.status_code == 200
     body = r.json()
-    assert body["total"] == 3
+    assert body["total"] == 4
     assert len(body["results"]) == 2
     assert all("text" not in t for t in body["results"])
 
@@ -165,6 +165,7 @@ def test_authors_list_has_counts():
     authors = {a["id"]: a for a in client.get("/api/authors").json()}
     assert authors["arunagirinathar"]["count"] == 2
     assert authors["santhananda-swamigal"]["count"] == 1
+    assert authors["bala-devarayan"]["count"] == 1
 
 
 def test_text_detail_has_verses():
