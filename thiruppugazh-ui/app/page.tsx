@@ -11,6 +11,8 @@ import PlacesDirectory from './components/PlacesDirectory';
 import PlacesMap from './components/PlacesMap';
 import SongModal from './components/SongModal';
 import ArupadaiVeedu from './components/ArupadaiVeedu';
+import { KANDHA_GURU_KAVACHAM, KANDHA_GURU_KAVACHAM_CREDIT, KANDHA_GURU_KAVACHAM_TITLE } from '@/app/constants/kandha-guru-kavacham';
+import KandhaKavachamView from './components/KandhaKavachamView';
 
 const FONT_SIZES = [14, 16, 18, 20, 22];
 const DEFAULT_FONT_SIZE = 16;
@@ -458,6 +460,30 @@ export default function LandingPage() {
               >
                 அனைத்துப் பாடல்களையும் காண்க
               </button>
+            </div>
+          )}
+
+          {activeTab === 'kavacham' && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="border-b-2 border-amber-400 pb-4">
+                <span className="text-xs font-bold text-[#8B1A1A] uppercase tracking-widest">
+                  முருகன் கவசம்
+                </span>
+                <h2 className="text-3xl font-extrabold text-[#660000] font-serif mt-1">
+                  கந்த குரு கவசம்
+                </h2>
+                <p className="text-sm text-stone-700 mt-2">{KANDHA_GURU_KAVACHAM_TITLE}</p>
+              </div>
+
+              <KandhaKavachamView text={KANDHA_GURU_KAVACHAM} />
+
+              <p className="text-sm text-stone-700">
+                நூல்: {KANDHA_GURU_KAVACHAM_CREDIT.author}. மூலம்: {KANDHA_GURU_KAVACHAM_CREDIT.source} (
+                <a href={KANDHA_GURU_KAVACHAM_CREDIT.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
+                  pm0034_03.pdf
+                </a>
+                ). வணிக நோக்கம் அல்லாத பயன்பாட்டிற்காக மட்டும் பகிரப்படுகிறது.
+              </p>
             </div>
           )}
 

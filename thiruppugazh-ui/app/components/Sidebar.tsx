@@ -6,7 +6,7 @@ import PeacockFeatherIcon from './icons/PeacockFeatherIcon';
 import AgalVilakkuIcon from './icons/AgalVilakkuIcon';
 import { Constants } from '@/app/constants/images';
 
-export type TabType = 'overview' | 'arunagirinathar' | 'thiruppugazh' | 'places' | 'map';
+export type TabType = 'overview' | 'arunagirinathar' | 'kavacham' | 'thiruppugazh' | 'places' | 'map';
 
 interface Props {
     sidebarOpen: boolean;
@@ -57,6 +57,15 @@ export default function Sidebar({ sidebarOpen, activeTab, totalSongs, onSelectTa
                         >
                             <GoldenVelIcon className="w-5 h-5" />
                             <span>அருணகிரிநாதர் (Saint)</span>
+                        </button>
+
+                        <button
+                            onClick={() => handleTabClick('kavacham')}
+                            className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition ${activeTab === 'kavacham' ? 'bg-[#8B1A1A] text-amber-100 shadow-md' : 'hover:bg-[#EAD6B5] text-stone-800'
+                                }`}
+                        >
+                            <GoldenVelIcon className="w-5 h-5" />
+                            <span>கந்த குரு கவசம் (Kavacham)</span>
                         </button>
 
                         <button
