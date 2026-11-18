@@ -27,6 +27,8 @@ export default function SongTextView({ text }: { text: string }) {
   const [pos, setPos] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [tempo, setTempo] = useState<Tempo>('medium');
+  const [readIndex, setReadIndex] = useState(0);
+  const readStanza = stanzas[readIndex];
 
   // Auto-advance: each line stays for the tempo, then the next line takes over.
   useEffect(() => {
@@ -58,27 +60,39 @@ export default function SongTextView({ text }: { text: string }) {
         </button>
       </div>
 
-      {mode === 'read' && (
-        <div className="space-y-8">
-          {sections.map((section, si) => (
-            <section key={si} className="space-y-4">
-              {section.title && (
-                <h3 className="text-lg font-bold text-[#8B1A1A] border-l-4 border-amber-400 pl-3">{section.title}</h3>
-              )}
-              {section.stanzas.map((stanza, sti) => (
-                <article key={sti} className="relative p-5 pr-14 rounded-2xl bg-white border-2 border-[#E3C896] font-serif text-stone-900 text-lg leading-loose">
-                  {stanza.no !== null && (
-                    <span className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full bg-[#F7EEDD] border border-amber-400 text-xs font-bold text-[#8B1A1A]">
-                      {stanza.no}
-                    </span>
-                  )}
-                  {stanza.lines.map((line, li) => (
-                    <p key={li}>{line}</p>
-                  ))}
-                </article>
-              ))}
-            </section>
-          ))}
+      {mode === 'read' && stanzas.length > 0 && (
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-stone-700">
+            <span>
+              {readIndex + 1} / {stanzas.length}
+            </span>
+            {readStanza.title && <span className="text-[#8B1A1A] font-semibold">· {readStanza.title}</span>}
+          </div>
+
+          <article className="relative p-6 pr-16 sm:p-8 sm:pr-16 rounded-2xl bg-white border-2 border-[#E3C896] font-serif text-stone-900 text-xl sm:text-2xl leading-loose min-h-[14rem]">
+            {readStanza.no !== null && (
+              <span className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full bg-[#F7EEDD] border border-amber-400 text-xs font-bold text-[#8B1A1A]">
+                {readStanza.no}
+              </span>
+            )}
+            {readStanza.lines.map((line, li) => (
+              <p key={li}>{line}</p>
+            ))}
+          </article>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => setReadIndex((i) => Math.max(0, i - 1))} disabled={readIndex === 0} className={`${buttonBase} ${buttonOff} disabled:opacity-40`}>
+              ◀ முந்தைய
+            </button>
+            <button
+              type="button"
+              onClick={() => setReadIndex((i) => Math.min(stanzas.length - 1, i + 1))}
+              disabled={readIndex >= stanzas.length - 1}
+              className={`${buttonBase} ${buttonOff} disabled:opacity-40`}
+            >
+              அடுத்தது ▶
+            </button>
+          </div>
         </div>
       )}
 

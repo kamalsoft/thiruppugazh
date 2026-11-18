@@ -23,6 +23,12 @@ export default function SongTexts() {
   const authorRef = useRef<string | null>(null);
   authorRef.current = authorId;
 
+  // Bumped on every song open, back, and author change; a late song response is ignored unless it is the latest.
+  const openSeq = useRef(0);
+
+  const openedIndex = opened ? cards.findIndex((c) => c.id === opened.id) : -1;
+  const hasMore = cards.length < total;
+
   useEffect(() => {
     fetchAuthors()
       .then((list) => {
@@ -39,6 +45,7 @@ export default function SongTexts() {
     setCards([]);
     setTotal(0);
     setPage(0);
+    openSeq.current += 1;
     setOpened(null);
     setOpenError(null);
     setListError(null);
@@ -61,10 +68,12 @@ export default function SongTexts() {
     };
   }, [authorId]);
 
-  function loadMore() {
+  // openFirstNew opens the first card of the page just loaded (used when stepping past the last card).
+  function loadMore(openFirstNew = false) {
     const requested = authorId;
     if (!requested) return;
     const next = page + 1;
+    const seq = openSeq.current;
     setLoading(true);
     fetchSongTexts({ author: requested, page: next, limit: PAGE_SIZE })
       .then((data) => {
@@ -72,6 +81,8 @@ export default function SongTexts() {
         setCards((current) => [...current, ...data.results]);
         setTotal(data.total);
         setPage(next);
+        // Skip opening if the viewer went back or opened another song while the page loaded.
+        if (openFirstNew && data.results[0] && seq === openSeq.current) openSong(data.results[0].id);
       })
       .catch(() => {
         if (authorRef.current === requested) setListError('மேலும் பாடல்களைப் பெற முடியவில்லை.');
@@ -80,10 +91,22 @@ export default function SongTexts() {
   }
 
   function openSong(id: string) {
+    const seq = ++openSeq.current;
     setOpenError(null);
     fetchSongText(id)
-      .then(setOpened)
-      .catch(() => setOpenError('இந்தப் பாடலைப் பெற முடியவில்லை. வேறு பாடலைத் தேர்ந்தெடுக்கவும்.'));
+      .then((song) => {
+        if (seq === openSeq.current) setOpened(song);
+      })
+      .catch(() => {
+        if (seq === openSeq.current) setOpenError('இந்தப் பாடலைப் பெற முடியவில்லை. வேறு பாடலைத் தேர்ந்தெடுக்கவும்.');
+      });
+  }
+
+  // Steps to the previous or next card of the author; past the last loaded card, the next page is fetched first.
+  function stepSong(step: -1 | 1) {
+    const target = cards[openedIndex + step];
+    if (target) openSong(target.id);
+    else if (step === 1 && hasMore) loadMore(true);
   }
 
   if (listError && !authors) return <p className="text-sm text-red-900">{listError}</p>;
@@ -95,6 +118,29 @@ export default function SongTexts() {
       active ? 'bg-[#8B1A1A] text-amber-100 shadow-md' : 'bg-white border border-[#E3C896] text-[#8B1A1A] hover:bg-[#FBF5E9]'
     }`;
 
+  const navClass = 'px-4 py-2 rounded-full text-sm font-semibold bg-white border border-[#E3C896] text-[#8B1A1A] hover:bg-[#FBF5E9] disabled:opacity-40';
+
+  const songNav = opened && (
+    <div className="flex flex-wrap items-center gap-2">
+      <button type="button" onClick={() => stepSong(-1)} disabled={openedIndex <= 0 || loading} className={navClass}>
+        ◀ முந்தைய பாடல்
+      </button>
+      <button
+        type="button"
+        onClick={() => stepSong(1)}
+        disabled={loading || openedIndex < 0 || (openedIndex === cards.length - 1 && !hasMore)}
+        className={navClass}
+      >
+        அடுத்த பாடல் ▶
+      </button>
+      {openedIndex >= 0 && (
+        <span className="ml-auto text-sm text-stone-700">
+          {openedIndex + 1} / {total}
+        </span>
+      )}
+    </div>
+  );
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-wrap gap-2">
@@ -105,15 +151,22 @@ export default function SongTexts() {
         ))}
       </div>
 
+      {openError && <p className="text-sm text-red-900">{openError}</p>}
+      {listError && authors && <p className="text-sm text-red-900">{listError}</p>}
+
       {opened ? (
         <div className="space-y-6">
           <button
             type="button"
-            onClick={() => setOpened(null)}
+            onClick={() => {
+              openSeq.current += 1;
+              setOpened(null);
+            }}
             className="px-4 py-2 rounded-full text-sm font-semibold bg-white border border-[#E3C896] text-[#8B1A1A] hover:bg-[#FBF5E9]"
           >
             ← பாடல்களுக்குத் திரும்பு
           </button>
+          {songNav}
           <div className="border-b-2 border-amber-400 pb-4">
             <span className="text-xs font-bold text-[#8B1A1A] uppercase tracking-widest">{opened.eyebrow}</span>
             <h2 className="text-3xl font-extrabold text-[#660000] font-serif mt-1">{opened.name}</h2>
@@ -121,12 +174,10 @@ export default function SongTexts() {
           </div>
           {/* key resets the viewer's mode and position when the song changes */}
           <SongTextView key={opened.id} text={opened.text} />
+          {songNav}
         </div>
       ) : (
         <div className="space-y-4">
-          {openError && <p className="text-sm text-red-900">{openError}</p>}
-          {listError && authors && <p className="text-sm text-red-900">{listError}</p>}
-
           <p className="text-sm text-stone-700">
             {total} பாடல்கள்
           </p>
@@ -150,7 +201,7 @@ export default function SongTexts() {
             <div className="flex justify-center">
               <button
                 type="button"
-                onClick={loadMore}
+                onClick={() => loadMore()}
                 disabled={loading}
                 className="px-5 py-3 rounded-xl bg-[#8B1A1A] text-white text-sm font-bold shadow-md hover:bg-[#660000] transition disabled:opacity-50"
               >
