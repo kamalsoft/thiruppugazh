@@ -11,8 +11,7 @@ import PlacesDirectory from './components/PlacesDirectory';
 import PlacesMap from './components/PlacesMap';
 import SongModal from './components/SongModal';
 import ArupadaiVeedu from './components/ArupadaiVeedu';
-import { KANDHA_GURU_KAVACHAM, KANDHA_GURU_KAVACHAM_CREDIT, KANDHA_GURU_KAVACHAM_TITLE } from '@/app/constants/kandha-guru-kavacham';
-import KandhaKavachamView from './components/KandhaKavachamView';
+import SongTexts from './components/SongTexts';
 
 const FONT_SIZES = [14, 16, 18, 20, 22];
 const DEFAULT_FONT_SIZE = 16;
@@ -325,24 +324,7 @@ export default function LandingPage() {
                     className="w-full h-auto rounded-xl"
                   />
                   <figcaption className="mt-3 text-xs text-stone-600 leading-relaxed">
-                    படம்: Mahalakshmi.S,{' '}
-                    <a
-                      href="https://commons.wikimedia.org/wiki/File:Arunagirinathar.jpg"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline text-[#8B1A1A]"
-                    >
-                      Wikimedia Commons
-                    </a>{' '}
-                    · உரிமம்{' '}
-                    <a
-                      href="https://creativecommons.org/licenses/by-sa/4.0/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline text-[#8B1A1A]"
-                    >
-                      CC BY-SA 4.0
-                    </a>
+                    படம்: Mahalakshmi.S · உரிமம் CC BY-SA 4.0
                   </figcaption>
                 </figure>
 
@@ -377,19 +359,7 @@ export default function LandingPage() {
 
                   <div>
                     <p className="text-sm text-stone-700">
-                      மூலநூல்கள் Project Madurai தளத்தில் உள்ளன:{' '}
-                      <a href="https://www.projectmadurai.org/pmworks.html" target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
-                        பட்டியல்
-                      </a>
-                      ,{' '}
-                      <a href="https://www.projectmadurai.org/pm_etexts/utf8/pmuni0180.html" target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
-                        திருப்புகழ் பாகம் 1
-                      </a>
-                      ,{' '}
-                      <a href="https://www.projectmadurai.org/pm_etexts/utf8/pmuni0023.html" target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
-                        கந்தர் அனுபூதி மற்றும் விருத்தங்கள்
-                      </a>
-                      .
+                      மூலநூல்கள் Project Madurai தளத்தில் உள்ளன: பட்டியல், திருப்புகழ் பாகம் 1, கந்தர் அனுபூதி மற்றும் விருத்தங்கள்.
                     </p>
                     <h3 className="text-base font-bold text-[#8B1A1A] mb-3">இவரது நூல்கள்</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 not-prose">
@@ -425,15 +395,8 @@ export default function LandingPage() {
 
                   <p className="text-xs text-stone-600 bg-amber-50 border border-amber-300 rounded-xl p-3">
                     குறிப்பு: இந்தப் பக்கத்தின் வாழ்க்கை விவரங்கள் வரலாற்று ஆய்வுகள் மற்றும் மரபுவழிக் கதைகளின் கலவை.
-                    மரபுவழிச் செய்திகளை வரலாற்று உண்மைகளிலிருந்து பிரித்துப் பார்க்கவும். ஆதாரங்கள்:{' '}
-                    <a href="https://en.wikipedia.org/wiki/Arunagirinathar" target="_blank" rel="noopener noreferrer" className="underline">
-                      Wikipedia (Arunagirinathar)
-                    </a>
-                    ,{' '}
-                    <a href="https://en.wikipedia.org/wiki/Kandar_Anubhuti" target="_blank" rel="noopener noreferrer" className="underline">
-                      Kandar Anubhuti
-                    </a>
-                    .
+                    மரபுவழிச் செய்திகளை வரலாற்று உண்மைகளிலிருந்து பிரித்துப் பார்க்கவும். ஆதாரங்கள்:
+                    Wikipedia (Arunagirinathar), Kandar Anubhuti.
                   </p>
                 </div>
               </div>
@@ -463,29 +426,7 @@ export default function LandingPage() {
             </div>
           )}
 
-          {activeTab === 'kavacham' && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="border-b-2 border-amber-400 pb-4">
-                <span className="text-xs font-bold text-[#8B1A1A] uppercase tracking-widest">
-                  முருகன் கவசம்
-                </span>
-                <h2 className="text-3xl font-extrabold text-[#660000] font-serif mt-1">
-                  கந்த குரு கவசம்
-                </h2>
-                <p className="text-sm text-stone-700 mt-2">{KANDHA_GURU_KAVACHAM_TITLE}</p>
-              </div>
-
-              <KandhaKavachamView text={KANDHA_GURU_KAVACHAM} />
-
-              <p className="text-sm text-stone-700">
-                நூல்: {KANDHA_GURU_KAVACHAM_CREDIT.author}. மூலம்: {KANDHA_GURU_KAVACHAM_CREDIT.source} (
-                <a href={KANDHA_GURU_KAVACHAM_CREDIT.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline text-[#8B1A1A]">
-                  pm0034_03.pdf
-                </a>
-                ). வணிக நோக்கம் அல்லாத பயன்பாட்டிற்காக மட்டும் பகிரப்படுகிறது.
-              </p>
-            </div>
-          )}
+          {activeTab === 'texts' && <SongTexts />}
 
           {activeTab === 'thiruppugazh' && (
             <div className="space-y-4 animate-fade-in">

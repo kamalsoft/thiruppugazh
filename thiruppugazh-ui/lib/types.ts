@@ -26,3 +26,16 @@ export interface PlaceMapping {
   total_songs: number;
   song_numbers: number[];
 }
+
+export interface SongTextSummary {
+  id: string;
+  name: string;
+  eyebrow: string;
+  title: string;
+  author: string;
+  source: string;
+}
+
+export interface SongTextDetail extends SongTextSummary {
+  text: string;
+}

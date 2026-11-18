@@ -9,7 +9,7 @@ type Tempo = 'slow' | 'medium' | 'fast';
 const TEMPO_MS: Record<Tempo, number> = { slow: 6000, medium: 4000, fast: 2500 };
 const TEMPO_LABEL: Record<Tempo, string> = { slow: 'மெதுவாக', medium: 'நடுத்தரம்', fast: 'வேகமாக' };
 
-export default function KandhaKavachamView({ text }: { text: string }) {
+export default function SongTextView({ text }: { text: string }) {
   const sections = useMemo(() => parseSections(text), [text]);
   const stanzas = useMemo(
     () => sections.flatMap((section) => section.stanzas.map((stanza) => ({ ...stanza, title: section.title }))),

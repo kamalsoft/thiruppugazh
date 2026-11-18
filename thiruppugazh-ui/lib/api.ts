@@ -3,7 +3,7 @@ api.ts
 */
 
 import { API_CONFIG } from './config';
-import { PaginatedResponse, SongDetail, PlaceMapping } from './types';
+import { PaginatedResponse, SongDetail, PlaceMapping, SongTextSummary, SongTextDetail } from './types';
 
 type SongSearchParams = {
   q?: string;
@@ -99,4 +99,18 @@ export async function fetchRagas(): Promise<string[]> {
  */
 export async function fetchThalas(): Promise<string[]> {
   return apiFetch<string[]>('/thalas');
+}
+
+/**
+ * Fetch the list of song texts (without verses)
+ */
+export async function fetchSongTexts(): Promise<SongTextSummary[]> {
+  return apiFetch<SongTextSummary[]>('/texts');
+}
+
+/**
+ * Fetch one song text with its verses
+ */
+export async function fetchSongText(id: string): Promise<SongTextDetail> {
+  return apiFetch<SongTextDetail>(`/texts/${encodeURIComponent(id)}`);
 }
