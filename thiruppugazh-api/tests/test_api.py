@@ -144,13 +144,27 @@ def test_static_lists_are_cacheable(url):
     assert "max-age" in client.get(url).headers["cache-control"]
 
 
-def test_texts_list_has_summaries_without_verses():
-    r = client.get("/api/texts")
+def test_texts_list_is_paged_and_has_no_verses():
+    r = client.get("/api/texts", params={"limit": 2})
     assert r.status_code == 200
-    items = r.json()
-    assert {"kandha-guru-kavacham", "kandar-anubhuti", "kandar-alankaram"} <= {t["id"] for t in items}
-    assert all("text" not in t for t in items)
-    assert "thirupugazh" not in {t["id"] for t in items}
+    body = r.json()
+    assert body["total"] == 3
+    assert len(body["results"]) == 2
+    assert all("text" not in t for t in body["results"])
+
+
+def test_texts_list_excludes_thirupugazh_and_filters_by_author():
+    body = client.get("/api/texts", params={"author": "santhananda-swamigal"}).json()
+    assert [t["id"] for t in body["results"]] == ["kandha-guru-kavacham"]
+    assert body["results"][0]["author_id"] == "santhananda-swamigal"
+    all_ids = {t["id"] for t in client.get("/api/texts", params={"limit": 50}).json()["results"]}
+    assert "thirupugazh" not in all_ids
+
+
+def test_authors_list_has_counts():
+    authors = {a["id"]: a for a in client.get("/api/authors").json()}
+    assert authors["arunagirinathar"]["count"] == 2
+    assert authors["santhananda-swamigal"]["count"] == 1
 
 
 def test_text_detail_has_verses():
@@ -168,26 +182,30 @@ def test_malformed_text_id_is_rejected():
     assert client.get("/api/texts/Bad_ID").status_code == 422
 
 
-def _write_text(folder, name, **fields):
+def _write_text(root, author_dir, name, **fields):
     import json
 
     base = {"id": name, "name": "n", "eyebrow": "e", "title": "t", "author": "a", "source": "s", "text": "v"}
     base.update(fields)
-    (folder / name).mkdir(exist_ok=True)
-    (folder / name / f"{name}.json").write_text(json.dumps(base), encoding="utf-8")
+    folder = root / author_dir / name
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / f"{name}.json").write_text(json.dumps(base), encoding="utf-8")
 
 
 def test_bad_text_files_are_skipped_and_good_ones_load(tmp_path):
-    from app.routes.texts import load_texts
+    from app.routes.texts import load_authors, load_texts
 
-    _write_text(tmp_path, "good")
-    _write_text(tmp_path, "wrong-id", id="other")
-    _write_text(tmp_path, "no-author", author=None, **{})
-    (tmp_path / "broken").mkdir()
-    (tmp_path / "broken" / "broken.json").write_text('{"id": "broken", "name": "x"', encoding="utf-8")
-    (tmp_path / "missing").mkdir()
-    (tmp_path / "missing" / "missing.json").write_text('{"id": "missing"}', encoding="utf-8")
+    (tmp_path / "someone").mkdir()
+    (tmp_path / "someone" / "author.json").write_text('{"id": "someone", "name": "S"}', encoding="utf-8")
+    _write_text(tmp_path, "someone", "good")
+    _write_text(tmp_path, "someone", "wrong-id", id="other")
+    _write_text(tmp_path, "someone", "no-author", author=None)
+    (tmp_path / "someone" / "broken").mkdir()
+    (tmp_path / "someone" / "broken" / "broken.json").write_text('{"id": "broken", "name": "x"', encoding="utf-8")
+    (tmp_path / "someone" / "missing").mkdir()
+    (tmp_path / "someone" / "missing" / "missing.json").write_text('{"id": "missing"}', encoding="utf-8")
 
-    loaded = load_texts(tmp_path)
+    loaded = load_texts(tmp_path, load_authors(tmp_path))
 
     assert set(loaded) == {"good"}
+    assert loaded["good"].author_id == "someone"

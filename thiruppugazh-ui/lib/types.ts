@@ -33,7 +33,21 @@ export interface SongTextSummary {
   eyebrow: string;
   title: string;
   author: string;
+  author_id: string;
   source: string;
+}
+
+export interface SongTextPage {
+  total: number;
+  page: number;
+  limit: number;
+  results: SongTextSummary[];
+}
+
+export interface AuthorSummary {
+  id: string;
+  name: string;
+  count: number;
 }
 
 export interface SongTextDetail extends SongTextSummary {

@@ -120,7 +120,7 @@ class SongDatabase:
         song: Dict = dict(index_item)
 
         try:
-            rel_path = index_item.get("file_path", f"songs/thirupugazh/song_{song_number}.json")
+            rel_path = index_item.get("file_path", f"songs/arunagirinathar/thirupugazh/song_{song_number}.json")
             file_path = self._safe_path(rel_path)
             if not os.path.exists(file_path):
                 file_path = os.path.join(str(THIRUPPUGAZH_DIR), f"song_{song_number}.json")
