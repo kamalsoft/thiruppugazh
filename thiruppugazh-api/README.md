@@ -5,6 +5,7 @@ FastAPI service that serves the Thiruppugazh songs, places, ragas and thalas fro
 ## Prerequisites
 
 - Python 3.9 or later (the local `.venv` uses 3.14)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) to install dependencies and run the app
 
 ## Setup
 
@@ -16,10 +17,21 @@ uv sync --group dev   # installs from pyproject.toml and uv.lock (the single dep
 ## Run
 
 ```bash
+cd thiruppugazh-api
+uv run uvicorn app.main:app --reload
+```
+
+`uv run` uses the project's `.venv`, so there is no need to activate it. If you prefer to activate it first:
+
+```bash
+cd thiruppugazh-api
+source .venv/bin/activate
 uvicorn app.main:app --reload
 ```
 
-The API runs at `http://localhost:8000`. Interactive docs are at `/docs`.
+The API runs at `http://localhost:8000`. Interactive docs are at `http://localhost:8000/docs`.
+
+If `uvicorn: command not found` appears, the command is running outside the project environment (for example, in a conda `(base)` shell). Use `uv run` as shown above.
 
 Set `ALLOWED_ORIGINS` (comma-separated, default `http://localhost:3000`) to allow other browser origins.
 

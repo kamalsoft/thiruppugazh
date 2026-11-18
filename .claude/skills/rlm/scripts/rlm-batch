@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CHUNKS_DIR="$1"
+OUT_DIR="$2"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+mkdir -p "$OUT_DIR"
+
+for prompt_file in "$CHUNKS_DIR"/*.md; do
+  base=$(basename "$prompt_file" .md)
+  "$SCRIPT_DIR/rlm-query" "$prompt_file" "$OUT_DIR/${base}.out.md" &
+done
+
+wait

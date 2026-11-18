@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROMPT_FILE="$1"
+OUTPUT_FILE="$2"
+
+DEPTH="${RLM_DEPTH:-0}"
+MAX_DEPTH="${RLM_MAX_DEPTH:-3}"
+MAX_PARALLEL="${RLM_MAX_PARALLEL:-8}"
+LOCK_DIR="/tmp/rlm-locks"
+
+if [ "$DEPTH" -ge "$MAX_DEPTH" ]; then
+  echo "Error: RLM_MAX_DEPTH ($MAX_DEPTH) reached. Process directly without spawning." >&2
+  exit 1
+fi
+
+mkdir -p "$LOCK_DIR"
+
+# Acquire an atomic slot using mkdir
+acquire_slot() {
+  while true; do
+    for i in $(seq 1 "$MAX_PARALLEL"); do
+      if mkdir "$LOCK_DIR/slot_$i" 2>/dev/null; then
+        echo "$i"
+        return
+      fi
+    done
+    sleep 0.5
+  done
+}
+
+SLOT=$(acquire_slot)
+trap 'rmdir "$LOCK_DIR/slot_$SLOT" 2>/dev/null || true' EXIT
+
+NEXT_DEPTH=$((DEPTH + 1))
+
+# Spawn stateless subagent with incremented depth
+RLM_DEPTH="$NEXT_DEPTH" claude -p "$(cat "$PROMPT_FILE")" \
+  --allowedTools "Read,Grep,Glob,Bash" \
+  > "$OUTPUT_FILE"
